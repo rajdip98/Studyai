@@ -15,6 +15,7 @@ import { categoriesRouter } from "./modules/categories/categories.routes";
 import { cartRouter } from "./modules/cart/cart.routes";
 import { addressesRouter } from "./modules/addresses/addresses.routes";
 import { ordersRouter } from "./modules/orders/orders.routes";
+import { activityPublicRouter } from "./modules/orders/activity.public.routes";
 import { paymentsRouter } from "./modules/payments/payments.routes";
 import { reviewsRouter } from "./modules/reviews/reviews.routes";
 import { siteAssetsPublicRouter } from "./modules/site-assets/site-assets.public.routes";
@@ -74,6 +75,7 @@ export function createApp() {
   app.use("/api/cart", cartRouter);
   app.use("/api/addresses", addressesRouter);
   app.use("/api/orders", ordersRouter);
+  app.use("/api/activity", activityPublicRouter);
   app.use("/api/payments", paymentsRouter);
   app.use("/api/reviews", reviewsRouter);
   app.use("/api/site-assets", siteAssetsPublicRouter);

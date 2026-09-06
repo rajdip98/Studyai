@@ -7,19 +7,24 @@ const prisma = new PrismaClient();
 async function main() {
   const categories = await Promise.all(
     [
-      { slug: "bone-care", name: "Bone Care" },
-      { slug: "womens-care", name: "Women's Care" },
-      { slug: "diabetes", name: "Diabetes" },
-      { slug: "digestion", name: "Digestion" },
-      { slug: "heart-care", name: "Heart Care" },
-      { slug: "immunity", name: "Immunity" },
+      { slug: "immunity", name: "Immunity", description: "Ojas & Vitality" },
+      { slug: "bone-care", name: "Bone Care", description: "Joint & Cartilage" },
+      { slug: "womens-care", name: "Women's Care", description: "Hormone Balance" },
+      { slug: "diabetes", name: "Diabetes", description: "Sugar Metabolism" },
+      { slug: "digestion", name: "Digestion", description: "Agni Restoration" },
+      { slug: "heart-care", name: "Heart Care", description: "Cardio Vitality" },
     ].map((c) =>
-      prisma.category.upsert({ where: { slug: c.slug }, update: {}, create: c }),
+      prisma.category.upsert({
+        where: { slug: c.slug },
+        update: { name: c.name, description: c.description },
+        create: c,
+      }),
     ),
   );
 
   const boneCare = categories.find((c) => c.slug === "bone-care")!;
   const womensCare = categories.find((c) => c.slug === "womens-care")!;
+  const heartCare = categories.find((c) => c.slug === "heart-care")!;
 
   await prisma.product.upsert({
     where: { slug: "prakriti-bone-relief" },
@@ -64,6 +69,29 @@ async function main() {
       categoryId: womensCare.id,
       ratingAverage: 4.3,
       ratingCount: 220,
+    },
+  });
+
+  await prisma.product.upsert({
+    where: { slug: "prakriti-aarogyam" },
+    update: {},
+    create: {
+      slug: "prakriti-aarogyam",
+      name: "Prakriti Aarogyam",
+      subtitle: "500ML — Super Herbs Tonic Enriched with Kesar & Shilajit",
+      description:
+        "A restorative daily tonic blending classical Rasayana herbs with saffron and purified shilajit to support cardiovascular vitality, stamina, and everyday resilience.",
+      images: ["/assets/products/aarogyam-1.jpg"],
+      priceInPaise: 99900,
+      mrpInPaise: 139900,
+      stockQuantity: 500,
+      sku: "PHC-AAROGYAM-500",
+      isBestseller: true,
+      tags: ["100% Ayurvedic", "Daily Tonic"],
+      ingredients: ["Kesar (Saffron)", "Shilajit", "Ashwagandha"],
+      categoryId: heartCare.id,
+      ratingAverage: 4.9,
+      ratingCount: 210,
     },
   });
 

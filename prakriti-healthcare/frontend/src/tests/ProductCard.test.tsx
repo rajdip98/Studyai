@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { AuthProvider } from "../context/AuthContext";
+import { CartProvider } from "../context/CartContext";
 import type { Product } from "../api/types";
 
 const product: Product = {
@@ -21,24 +23,36 @@ const product: Product = {
   ratingCount: 508,
 };
 
+function renderCard(p: Product) {
+  return render(
+    <MemoryRouter>
+      <AuthProvider>
+        <CartProvider>
+          <ProductCard product={p} />
+        </CartProvider>
+      </AuthProvider>
+    </MemoryRouter>,
+  );
+}
+
 describe("ProductCard", () => {
   it("renders product name and formatted prices", () => {
-    render(
-      <MemoryRouter>
-        <ProductCard product={product} />
-      </MemoryRouter>,
-    );
+    renderCard(product);
     expect(screen.getByText("Prakriti Bone Relief")).toBeInTheDocument();
     expect(screen.getByText("Rs. 999")).toBeInTheDocument();
     expect(screen.getByText("Rs. 1,399")).toBeInTheDocument();
   });
 
-  it("shows the discount percentage badge", () => {
-    render(
-      <MemoryRouter>
-        <ProductCard product={product} />
-      </MemoryRouter>,
-    );
-    expect(screen.getByText(/% OFF/)).toBeInTheDocument();
+  it("shows a Sale badge when discounted", () => {
+    renderCard(product);
+    expect(screen.getByText("Sale")).toBeInTheDocument();
+  });
+
+  it("shows In Stock / Out of Stock status", () => {
+    renderCard(product);
+    expect(screen.getByText("In Stock")).toBeInTheDocument();
+
+    renderCard({ ...product, stockQuantity: 0 });
+    expect(screen.getByText("Out of Stock")).toBeInTheDocument();
   });
 });

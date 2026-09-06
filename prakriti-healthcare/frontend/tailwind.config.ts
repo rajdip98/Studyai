@@ -8,17 +8,22 @@ export default {
     container: { center: true, padding: "1rem", screens: { "2xl": "1280px" } },
     extend: {
       colors: {
-        primary: { DEFAULT: "#1B4D3E", dark: "#0F5132" },
+        primary: { DEFAULT: "#1B4D3E", dark: "#0F5132", container: "#1b4d3e" },
         secondary: { DEFAULT: "#38A169" },
-        gold: { DEFAULT: "#C5A059", dark: "#AA8743" },
+        gold: { DEFAULT: "#C5A059", dark: "#AA8743", light: "#E8D5A3" },
         charcoal: "#262626",
         surface: {
           cream: "#FCF6EA",
           subtle: "#F4F7F4",
           pure: "#FFFFFF",
+          variant: "#e4e2e1",
         },
         border: { earth: "#E5E1D8" },
         muted: "#686D65",
+        "on-surface-variant": "#404945",
+        "on-primary-container": "#8abda9",
+        "secondary-fixed": "#91f8b8",
+        "leaf-vibrant": "#2E7D32",
         sale: "#B9382B",
       },
       fontFamily: {

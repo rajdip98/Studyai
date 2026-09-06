@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -16,8 +16,11 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminApp from "./pages/admin/AdminApp";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import BuyerPopup from "./components/BuyerPopup";
 
 function StorefrontApp() {
+  const location = useLocation();
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -60,6 +63,8 @@ function StorefrontApp() {
         </Routes>
       </main>
       <Footer />
+      {location.pathname === "/" && <BuyerPopup />}
+      <FloatingWhatsApp />
     </div>
   );
 }
