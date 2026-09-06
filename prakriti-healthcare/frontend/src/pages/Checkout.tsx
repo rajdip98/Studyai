@@ -5,6 +5,7 @@ import type { Address } from "../api/types";
 import { useCart } from "../context/CartContext";
 import { formatPaise } from "../api/types";
 import { ApiError } from "../api/client";
+import { listPublicSiteAssets, type PublicSiteAsset } from "../api/siteAssets";
 
 export default function Checkout() {
   const { cart, refreshCart } = useCart();
@@ -15,6 +16,7 @@ export default function Checkout() {
   const [form, setForm] = useState({ fullName: "", phone: "", line1: "", city: "", state: "", postalCode: "" });
   const [error, setError] = useState<string | null>(null);
   const [placing, setPlacing] = useState(false);
+  const [paymentQr, setPaymentQr] = useState<PublicSiteAsset | null>(null);
 
   useEffect(() => {
     addressesApi.list().then((r) => {
@@ -23,6 +25,7 @@ export default function Checkout() {
       if (def) setSelectedAddressId(def.id);
       else setShowNewAddress(true);
     });
+    listPublicSiteAssets("PAYMENT_QR").then((r) => setPaymentQr(r.assets[0] ?? null));
   }, []);
 
   const items = cart?.items ?? [];
@@ -118,6 +121,13 @@ export default function Checkout() {
         <button className="btn-primary w-full" onClick={handlePlaceOrder} disabled={placing}>
           {placing ? "Placing order…" : "Place Order"}
         </button>
+
+        {paymentQr && (
+          <div className="border-t border-border-earth pt-3 text-center">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">Or pay via UPI</p>
+            <img src={paymentQr.url} alt="UPI payment QR code" className="mx-auto mt-2 h-32 w-32 rounded-base border border-border-earth object-contain" />
+          </div>
+        )}
       </div>
     </div>
   );

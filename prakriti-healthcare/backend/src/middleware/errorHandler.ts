@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { MulterError } from "multer";
 import { logger } from "../config/logger";
 import { isProd } from "../config/env";
 
@@ -28,6 +29,11 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
     res.status(400).json({
       error: { code: "VALIDATION_ERROR", message: "Invalid input", details: err.flatten() },
     });
+    return;
+  }
+
+  if (err instanceof MulterError) {
+    res.status(400).json({ error: { code: `UPLOAD_${err.code}`, message: err.message } });
     return;
   }
 

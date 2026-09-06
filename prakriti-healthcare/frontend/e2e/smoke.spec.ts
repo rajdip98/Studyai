@@ -19,3 +19,10 @@ test("checkout redirects an unauthenticated visitor to login", async ({ page }) 
   await page.goto("/checkout");
   await expect(page).toHaveURL(/\/login/);
 });
+
+test("admin panel shows only a password gate, never the storefront chrome or panel content", async ({ page }) => {
+  await page.goto("/site/in/admin");
+  await expect(page.getByPlaceholder("Admin password")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Prakriti Healthcare" })).toHaveCount(0);
+  await expect(page.getByText("Homepage Banners")).toHaveCount(0);
+});

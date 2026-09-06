@@ -12,6 +12,12 @@ export default defineConfig({
         target: "http://localhost:4000",
         changeOrigin: true,
       },
+      // Locally-stored uploads (admin banners/posters/payment QR/product
+      // images) are served by the backend when S3 isn't configured.
+      "/uploads": {
+        target: "http://localhost:4000",
+        changeOrigin: true,
+      },
     },
   },
   build: {

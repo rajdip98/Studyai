@@ -54,7 +54,7 @@ model User {
   totpSecret        String?
   totpEnabled       Boolean   @default(false)
 
-  createdAt DateTime @updatedAt @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   addresses     Address[]
@@ -64,6 +64,7 @@ model User {
   refreshTokens RefreshToken[]
   auditLogs     AuditLog[]
   emailTokens   EmailToken[]
+  siteAssets    SiteAsset[]
 
   @@index([email])
 }
@@ -269,4 +270,31 @@ model AuditLog {
 
   @@index([userId])
   @@index([action])
+}
+
+// CMS-style content managed from the admin panel: homepage/promo banners,
+// posters, the payment QR code image, and the site logo. Rendered publicly
+// via GET /api/site-assets; managed via the admin-only endpoints.
+enum SiteAssetType {
+  HERO_BANNER
+  PROMO_BANNER
+  POSTER
+  PAYMENT_QR
+  LOGO
+}
+
+model SiteAsset {
+  id           String        @id @default(uuid())
+  type         SiteAssetType
+  url          String
+  storageKey   String // location in the storage backend (local path or S3 key), used to delete the file
+  altText      String?
+  sortOrder    Int           @default(0)
+  isActive     Boolean       @default(true)
+  uploadedById String?
+  uploadedBy   User?         @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([type, isActive])
 }

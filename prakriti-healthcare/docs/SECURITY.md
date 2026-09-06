@@ -22,6 +22,64 @@ common, high-impact attack paths and make the rest expensive and observable.
 | Password change / reset revokes all other sessions | `users.routes.ts`, `auth.service.ts::resetPassword` | Attacker with a stolen session gets kicked out the moment the real user regains control |
 | RBAC (`CUSTOMER` / `ADMIN` / `SUPPORT`) enforced via middleware, not client trust | `middleware/auth.ts::requireRole` | Privilege escalation |
 
+## Admin panel (`/site/in/admin`)
+
+The admin panel manages storefront content (homepage banners, promo banners,
+posters, the payment QR code, product images/catalog) and is reached at the
+frontend route `/site/in/admin`. Its design deliberately does **not** rely on
+a separate, weaker auth mechanism just because it asks for "a password":
+
+- **It's the same account system, not a shared secret.** The login page
+  (`frontend/src/pages/admin/AdminLogin.tsx`) collects only a password, but
+  submits it against the seeded admin account's real email
+  (`VITE_ADMIN_EMAIL`) through the exact same `/api/auth/login` endpoint
+  every other user goes through. That means it inherits, for free: Argon2id
+  hashing, per-IP rate limiting, account lockout after repeated failures,
+  rotating httpOnly session cookies, optional TOTP 2FA, and an audit log
+  entry for every attempt (see the Authentication table above). A hardcoded
+  plaintext password check in the frontend would have none of this.
+- **The path is not the security boundary.** `/site/in/admin` being unlinked
+  from the public site is a minor obscurity bonus, not the control — every
+  request the panel makes still goes through `requireAuth` +
+  `requireRole("ADMIN")` server-side (`middleware/auth.ts`), so guessing or
+  bookmarking the URL grants nothing without valid admin credentials.
+- **The password is changeable in place** from the panel's own "Change
+  Password" page, which requires the current password and (like every other
+  password change) revokes every other active session on success. The seed
+  script's initial password is intentionally called out in
+  `backend/prisma/seed.ts` and `README.md` as something to rotate
+  immediately — treat it the same as any other default credential.
+
+### File uploads (banners, posters, payment QR, product images)
+
+All uploads go through one endpoint (`POST /api/admin/uploads`,
+`backend/src/modules/admin/admin.routes.ts`), gated by `requireRole("ADMIN")`,
+CSRF, and a dedicated rate limit (`uploadLimiter`, 30/10min/IP):
+
+- **Content is verified by magic bytes, not filename or declared MIME
+  type** (`backend/src/utils/storage.ts::detectImageType`). Both of those
+  are attacker-controlled — a script relabeled `photo.png` with a spoofed
+  `Content-Type: image/png` is a classic upload-filter bypass. Only PNG,
+  JPEG, and WEBP signatures are accepted; anything else (including SVG,
+  which can carry inline `<script>`, and any non-image file) is rejected
+  before it's ever written anywhere.
+- **Stored filenames are always server-generated** (`randomUUID()` + the
+  extension implied by the detected format) — the original filename is
+  never used to construct a path, which rules out path traversal and
+  extension-spoofing attacks outright.
+- **Size-capped** at 5MB per file, one file per request
+  (`multer.memoryStorage()` with `limits`), mitigating storage/memory
+  exhaustion.
+- Uploaded images are public marketing/catalog content by design (they're
+  meant to appear on the storefront), so they're served without auth — but
+  from a dedicated `/uploads` path with `X-Content-Type-Options: nosniff`
+  and long-lived immutable caching, never executed as anything but a static
+  file.
+- **Known gap**: no virus/malware scanning is wired up (would need a service
+  like ClamAV). Since only authenticated admins can upload and content is
+  content-type-restricted to images, the realistic exposure is low, but a
+  production deployment handling untrusted admin accounts should add one.
+
 ## Injection & input handling
 
 - **SQL injection**: all queries go through Prisma's parameterized query

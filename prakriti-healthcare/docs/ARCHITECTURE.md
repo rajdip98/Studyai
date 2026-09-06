@@ -50,6 +50,25 @@ entities:
   and whether its signature was cryptographically verified.
 - **AuditLog** — append-only trail of security-relevant actions (logins,
   password changes, admin actions, order status changes).
+- **SiteAsset** — CMS-style content managed from the admin panel
+  (`/site/in/admin`): homepage/promo banners, posters, the payment QR code,
+  and the logo. Each row is one uploaded image plus its type, ordering, and
+  active/hidden state; the storefront reads only `isActive: true` rows via
+  the public `GET /api/site-assets` endpoint.
+
+## Request flow: admin content upload
+
+1. Admin uploads an image via the panel → `POST /api/admin/uploads`
+   (`multipart/form-data`). The server verifies the file's real format from
+   its magic bytes (never trusting the filename or declared MIME type),
+   writes it to S3 (if configured) or local disk, and returns `{ url, key }`.
+2. The panel then calls `POST /api/admin/site-assets` with that `url`/`key`
+   plus the content type (`HERO_BANNER`, `PAYMENT_QR`, etc.) to create the
+   managed record — or, for product photos, attaches the `url` directly to a
+   `Product.images` array via the existing product update endpoint.
+3. The public storefront (Home hero banner, Checkout's payment QR code)
+   fetches `GET /api/site-assets?type=...` on render — no caching layer in
+   front of it yet, so edits in the panel appear immediately.
 
 ## Request flow: checkout
 

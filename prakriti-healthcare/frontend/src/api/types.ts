@@ -14,6 +14,9 @@ export interface Product {
   ratingAverage: number;
   ratingCount: number;
   category?: { id: string; slug: string; name: string } | null;
+  // Present on admin responses only.
+  sku?: string;
+  isActive?: boolean;
 }
 
 export interface Category {

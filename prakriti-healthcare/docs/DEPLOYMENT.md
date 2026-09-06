@@ -64,7 +64,12 @@ is mostly copy-and-adapt.
 - **Object storage**: product images belong in S3 (or an S3-compatible
   bucket) — see `S3_*` vars in `backend/.env.example`. Never store user
   uploads on the container's local filesystem (containers are ephemeral, and
-  it doesn't scale past one replica).
+  it doesn't scale past one replica). This applies directly to the admin
+  panel's upload feature (`/site/in/admin` — banners, posters, payment QR,
+  product photos, all via `POST /api/admin/uploads`): it already writes to
+  S3 automatically once the `S3_*` vars are set (`backend/src/utils/storage.ts`);
+  without them it silently falls back to local disk, which is fine for local
+  development but must not be relied on in production.
 
 ## Caching & CDN
 

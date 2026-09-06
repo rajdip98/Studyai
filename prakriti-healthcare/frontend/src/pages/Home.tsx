@@ -5,14 +5,17 @@ import type { Category, Product } from "../api/types";
 import ProductCard from "../components/ProductCard";
 import TrustBadges from "../components/TrustBadges";
 import CategoryGrid from "../components/CategoryGrid";
+import { listPublicSiteAssets, type PublicSiteAsset } from "../api/siteAssets";
 
 export default function Home() {
   const [bestsellers, setBestsellers] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [heroBanner, setHeroBanner] = useState<PublicSiteAsset | null>(null);
 
   useEffect(() => {
     listProducts({ bestseller: true }).then((r) => setBestsellers(r.items.slice(0, 3)));
     listCategories().then((r) => setCategories(r.categories.slice(0, 6)));
+    listPublicSiteAssets("HERO_BANNER").then((r) => setHeroBanner(r.assets[0] ?? null));
   }, []);
 
   return (
@@ -37,7 +40,11 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <div className="aspect-square rounded-base bg-surface-pure shadow-level2" aria-hidden />
+          <div className="aspect-square overflow-hidden rounded-base bg-surface-pure shadow-level2">
+            {heroBanner && (
+              <img src={heroBanner.url} alt={heroBanner.altText ?? ""} className="h-full w-full object-cover" />
+            )}
+          </div>
         </div>
       </section>
 

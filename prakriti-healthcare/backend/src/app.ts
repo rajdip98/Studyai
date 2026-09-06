@@ -6,6 +6,7 @@ import { issueCsrfToken } from "./middleware/csrf";
 import { apiLimiter } from "./middleware/rateLimit";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { logger } from "./config/logger";
+import { UPLOAD_DIR } from "./utils/storage";
 import { httpRequestDuration, healthRouter } from "./modules/health/health.routes";
 import { authRouter } from "./modules/auth/auth.routes";
 import { usersRouter } from "./modules/users/users.routes";
@@ -16,6 +17,7 @@ import { addressesRouter } from "./modules/addresses/addresses.routes";
 import { ordersRouter } from "./modules/orders/orders.routes";
 import { paymentsRouter } from "./modules/payments/payments.routes";
 import { reviewsRouter } from "./modules/reviews/reviews.routes";
+import { siteAssetsPublicRouter } from "./modules/site-assets/site-assets.public.routes";
 import { adminRouter } from "./modules/admin/admin.routes";
 
 export function createApp() {
@@ -47,6 +49,19 @@ export function createApp() {
 
   app.use("/health", healthRouter);
 
+  // Local-disk fallback for uploaded images (admin banners/posters/payment QR/
+  // product images) when S3 isn't configured — see utils/storage.ts. Public,
+  // read-only, content-addressed by a random filename (never the original
+  // upload name), so serving it without auth is safe.
+  app.use(
+    "/uploads",
+    express.static(UPLOAD_DIR, {
+      maxAge: "1y",
+      immutable: true,
+      setHeaders: (res) => res.setHeader("X-Content-Type-Options", "nosniff"),
+    }),
+  );
+
   // Global API rate limit as a backstop; individual sensitive routes layer
   // tighter, route-specific limits on top (see rateLimit.ts).
   app.use("/api", apiLimiter);
@@ -61,6 +76,7 @@ export function createApp() {
   app.use("/api/orders", ordersRouter);
   app.use("/api/payments", paymentsRouter);
   app.use("/api/reviews", reviewsRouter);
+  app.use("/api/site-assets", siteAssetsPublicRouter);
   app.use("/api/admin", adminRouter);
 
   app.use(notFoundHandler);

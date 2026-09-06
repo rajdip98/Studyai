@@ -64,3 +64,33 @@ export const api = {
   patch: <T,>(path: string, body?: unknown) => apiRequest<T>(path, { method: "PATCH", body }),
   delete: <T,>(path: string) => apiRequest<T>(path, { method: "DELETE" }),
 };
+
+/**
+ * Uploads a single file as multipart/form-data. Deliberately bypasses
+ * apiRequest (which always JSON-encodes) — the browser must set its own
+ * `Content-Type: multipart/form-data; boundary=...` header, which it can
+ * only do when we don't set Content-Type ourselves. The CSRF header is
+ * still attached, same as any other state-changing request.
+ */
+export async function uploadFile(path: string, file: File): Promise<{ url: string; key: string }> {
+  const csrfToken = getCookie("csrf_token");
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    credentials: "include",
+    headers: csrfToken ? { "X-CSRF-Token": csrfToken } : undefined,
+    body: formData,
+  });
+
+  const contentType = res.headers.get("content-type") ?? "";
+  const data = contentType.includes("application/json") ? await res.json() : undefined;
+
+  if (!res.ok) {
+    const err = data?.error ?? { code: "UNKNOWN_ERROR", message: "Upload failed" };
+    throw new ApiError(res.status, err.code, err.message);
+  }
+
+  return data as { url: string; key: string };
+}

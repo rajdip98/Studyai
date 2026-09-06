@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import argon2 from "argon2";
 
@@ -67,7 +68,14 @@ async function main() {
   });
 
   const adminEmail = "admin@prakritihealthcare.com";
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "ChangeMe!12345";
+  // Default initial admin credential, overridable via SEED_ADMIN_PASSWORD.
+  // NOTE: "rajdip1000@" does not satisfy this app's own password policy
+  // (utils/password.ts requires upper + lower case + a digit) — it's
+  // accepted here only because seeding writes the hash directly and skips
+  // that validation. Log in at /site/in/admin and change it immediately
+  // from the admin panel's "Change Password" page (enforces the real policy
+  // and revokes every other active session).
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "rajdip1000@";
   await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},
@@ -81,7 +89,11 @@ async function main() {
   });
 
   // eslint-disable-next-line no-console
-  console.log("Seed complete. Admin login:", adminEmail, "(password from SEED_ADMIN_PASSWORD env or default)");
+  console.log(
+    "Seed complete. Admin panel login: https://<your-domain>/site/in/admin —",
+    adminEmail,
+    "(password from SEED_ADMIN_PASSWORD env, or the insecure default — change it immediately after first login).",
+  );
 }
 
 main()

@@ -41,6 +41,23 @@ npm run dev                 # http://localhost:5173
 Or run everything with one command: `docker compose up --build` from
 `prakriti-healthcare/`.
 
+## Admin panel
+
+Manage homepage banners, promo banners, posters, the payment QR code, and
+the product catalog (including product photos) at:
+
+```
+http://localhost:5173/site/in/admin
+```
+
+Sign in with the seeded admin account's password. The default, set by
+`npm run prisma:seed`, is **`rajdip1000@`** (override it by setting
+`SEED_ADMIN_PASSWORD` before seeding) — **change it immediately** from the
+panel's "Change Password" page once you've logged in; it doesn't meet the
+app's own password policy and is documented here, so treat it as public.
+See `docs/SECURITY.md` for how the panel and its uploads are actually
+secured (it's not just a password prompt — see "Admin panel" section).
+
 ## Documentation
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — system design, data model, request flow

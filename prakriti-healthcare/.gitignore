@@ -22,6 +22,9 @@ npm-debug.log*
 # Prisma
 backend/prisma/migrations/dev.db
 
+# Locally-stored uploads (dev fallback when S3 isn't configured)
+backend/uploads/
+
 # Playwright
 frontend/playwright-report/
 frontend/test-results/

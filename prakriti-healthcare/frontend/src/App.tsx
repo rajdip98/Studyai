@@ -15,8 +15,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AdminApp from "./pages/admin/AdminApp";
 
-export default function App() {
+function StorefrontApp() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -60,5 +61,18 @@ export default function App() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+// The admin panel lives outside the storefront layout entirely (no public
+// Navbar/Footer, no link to it anywhere in the site) — it's only reachable
+// by typing /site/in/admin directly, and everything inside it is gated by
+// AdminApp's own auth check.
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/site/in/admin/*" element={<AdminApp />} />
+      <Route path="/*" element={<StorefrontApp />} />
+    </Routes>
   );
 }

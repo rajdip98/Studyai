@@ -86,7 +86,19 @@ Errors follow a consistent shape:
 |---|---|---|---|
 | POST | `/` | session | Body: `{ productId, rating, title?, body }`. One review per user per product. |
 
+## Site assets — `/api/site-assets` (public, read-only)
+
+Powers the admin-managed content shown on the storefront (homepage banners,
+posters, the payment QR code at checkout).
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/` | Query: `type` (`HERO_BANNER`\|`PROMO_BANNER`\|`POSTER`\|`PAYMENT_QR`\|`LOGO`). Returns only `isActive: true` assets. |
+
 ## Admin — `/api/admin` (admin role required)
+
+The admin panel (frontend route `/site/in/admin`) is built entirely on these
+endpoints — see SECURITY.md for how the panel itself is protected.
 
 | Method | Path | Description |
 |---|---|---|
@@ -94,6 +106,12 @@ Errors follow a consistent shape:
 | PATCH | `/orders/:id/status` | Body: `{ status }`. Audit-logged. |
 | GET | `/users` | Paginated user list. |
 | GET | `/audit-logs` | Latest 200 audit log entries. |
+| POST | `/uploads` | `multipart/form-data`, field `file`. Validates the file's real content (magic bytes) — not its filename or declared MIME type — and stores it (S3 if configured, else local disk). Returns `{ url, key }`. Rate-limited and audit-logged. |
+| GET | `/site-assets` | Query: `type?`. All assets (including inactive), for the management UI. |
+| POST | `/site-assets` | Body: `{ type, url, key, altText?, sortOrder? }`. `url`/`key` come from `/uploads`. |
+| PATCH | `/site-assets/:id` | Body: `{ altText?, sortOrder?, isActive? }`. |
+| DELETE | `/site-assets/:id` | Deletes the record and the underlying file. |
+| GET | `/products` | Paginated list of **all** products, including inactive ones (the public `/api/products` only returns active products). Product create/update/delete still go through the existing admin-only endpoints on `/api/products` (see Catalog above) — a product's `images` array is populated by calling `/uploads` first, then attaching the returned URL. |
 
 ## Health & observability — `/health`
 

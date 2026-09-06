@@ -54,3 +54,14 @@ export const paymentLimiter = rateLimit({
   store: store("payment"),
   keyGenerator: keyByIp,
 });
+
+/** Admin file uploads: already role-gated, but rate-limited too so a
+ * compromised admin session (or a buggy client) can't hammer disk/S3 I/O. */
+export const uploadLimiter = rateLimit({
+  windowMs: 10 * 60_000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: store("upload"),
+  keyGenerator: keyByIp,
+});
