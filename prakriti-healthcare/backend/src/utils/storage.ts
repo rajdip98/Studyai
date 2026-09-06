@@ -1,17 +1,18 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "../config/env";
+import { logger } from "../config/logger";
 
 const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+const STORAGE_BUCKET = "site-assets";
 
 /**
  * Detects the real image format from its magic bytes rather than trusting
  * the client-supplied filename or Content-Type — both are attacker
  * controlled and a classic way to smuggle an executable past an extension
  * allowlist (e.g. a ".php" file relabeled "image/png"). Only formats
- * detected here are ever accepted or written to disk/S3.
+ * detected here are ever accepted or written to Supabase Storage/disk.
  */
 const MAGIC_BYTE_CHECKS: Array<{ ext: string; mime: string; check: (buf: Buffer) => boolean }> = [
   {
@@ -43,42 +44,70 @@ export interface UploadResult {
   key: string;
 }
 
-let s3Client: S3Client | null = null;
-function getS3Client(): S3Client | null {
-  if (!env.S3_BUCKET || !env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY) return null;
-  if (!s3Client) {
-    s3Client = new S3Client({
-      region: env.S3_REGION ?? "ap-south-1",
-      endpoint: env.S3_ENDPOINT || undefined,
-      credentials: { accessKeyId: env.S3_ACCESS_KEY_ID, secretAccessKey: env.S3_SECRET_ACCESS_KEY },
-    });
+function supabaseConfigured(): boolean {
+  return Boolean(env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+/**
+ * Uploads via Supabase Storage's REST API using the service_role key, which
+ * bypasses Row Level Security by design — appropriate here because this
+ * endpoint is already gated by our own admin auth, CSRF, and magic-byte
+ * validation before a single byte reaches this function. Plain `fetch` is
+ * used deliberately instead of the @supabase/supabase-js SDK to avoid
+ * pulling in another dependency with its own module-format surprises (see
+ * the sanitize-html/htmlparser2 ESM incident this project already hit).
+ */
+async function uploadToSupabase(filename: string, buffer: Buffer, mime: string): Promise<UploadResult> {
+  const key = filename;
+  const res = await fetch(`${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${key}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY!,
+      "Content-Type": mime,
+      "x-upsert": "false",
+    },
+    body: buffer,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    logger.error({ status: res.status, text }, "Supabase Storage upload failed");
+    throw new Error("Storage upload failed");
   }
-  return s3Client;
+
+  // The bucket is public (created with public: true — see the migration
+  // notes in docs/DEPLOYMENT.md), so this URL is fetchable with no auth.
+  const url = `${env.SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${key}`;
+  return { url, key };
+}
+
+async function deleteFromSupabase(key: string): Promise<void> {
+  const res = await fetch(`${env.SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${key}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY!,
+    },
+  });
+  if (!res.ok && res.status !== 404) {
+    const text = await res.text();
+    logger.error({ status: res.status, text }, "Supabase Storage delete failed");
+  }
 }
 
 /**
  * Persists an already-validated image buffer and returns its public URL.
- * Uses S3 (+ CDN) when configured; otherwise falls back to local disk,
- * served statically by Express (see app.ts) — suitable for local
- * development only, since container filesystems are ephemeral in
- * production (see docs/DEPLOYMENT.md).
+ * Uses Supabase Storage (+ optional CDN in front of it) when configured;
+ * otherwise falls back to local disk, served statically by Express (see
+ * app.ts) — suitable for local development only, since container
+ * filesystems are ephemeral in production (see docs/DEPLOYMENT.md).
  */
 export async function saveUpload(buffer: Buffer, ext: string, mime: string): Promise<UploadResult> {
   const filename = `${randomUUID()}.${ext}`;
-  const s3 = getS3Client();
 
-  if (s3) {
-    const key = `uploads/${filename}`;
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: env.S3_BUCKET,
-        Key: key,
-        Body: buffer,
-        ContentType: mime,
-      }),
-    );
-    const base = env.CDN_BASE_URL || `${env.S3_ENDPOINT ?? ""}/${env.S3_BUCKET}`;
-    return { url: `${base}/${key}`, key };
+  if (supabaseConfigured()) {
+    return uploadToSupabase(filename, buffer, mime);
   }
 
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
@@ -91,10 +120,8 @@ export async function saveUpload(buffer: Buffer, ext: string, mime: string): Pro
 }
 
 export async function deleteUpload(key: string): Promise<void> {
-  const s3 = getS3Client();
-  if (s3) {
-    const fullKey = key.startsWith("uploads/") ? key : `uploads/${key}`;
-    await s3.send(new DeleteObjectCommand({ Bucket: env.S3_BUCKET, Key: fullKey }));
+  if (supabaseConfigured()) {
+    await deleteFromSupabase(key);
     return;
   }
   await fs.rm(path.join(UPLOAD_DIR, path.basename(key)), { force: true });

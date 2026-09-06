@@ -34,11 +34,12 @@ const envSchema = z.object({
 
   SENTRY_DSN: z.string().optional(),
 
-  S3_ENDPOINT: z.string().optional(),
-  S3_BUCKET: z.string().optional(),
-  S3_ACCESS_KEY_ID: z.string().optional(),
-  S3_SECRET_ACCESS_KEY: z.string().optional(),
-  S3_REGION: z.string().optional(),
+  // Supabase Postgres is the primary DATABASE_URL (see .env.example).
+  // These two are for Supabase Storage (admin panel uploads); the
+  // service_role key must NEVER be exposed to the frontend — it bypasses
+  // Row Level Security entirely, by design, for trusted server-side use.
+  SUPABASE_URL: z.string().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   CDN_BASE_URL: z.string().optional(),
 });
 
