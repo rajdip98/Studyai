@@ -37,10 +37,11 @@ export async function registerUser(name: string, email: string, password: string
     },
   });
 
+  const verifyUrl = `${env.FRONTEND_URL}/verify-email?token=${encodeURIComponent(token)}`;
   await sendMail(
     user.email,
     "Verify your Prakriti Healthcare account",
-    `<p>Welcome to Prakriti Healthcare. Verify your email using this code (valid ${env.EMAIL_TOKEN_TTL_MIN} minutes):</p><p><code>${token}</code></p>`,
+    `<p>Welcome to Prakriti Healthcare. Verify your email (link valid ${env.EMAIL_TOKEN_TTL_MIN} minutes):</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`,
   );
 
   return user;
@@ -192,10 +193,11 @@ export async function requestPasswordReset(email: string) {
     },
   });
 
+  const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${encodeURIComponent(token)}`;
   await sendMail(
     user.email,
     "Reset your Prakriti Healthcare password",
-    `<p>Use this code to reset your password (valid ${env.EMAIL_TOKEN_TTL_MIN} minutes):</p><p><code>${token}</code></p><p>If you didn't request this, you can ignore this email.</p>`,
+    `<p>Use this link to reset your password (valid ${env.EMAIL_TOKEN_TTL_MIN} minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, you can ignore this email.</p>`,
   );
 }
 

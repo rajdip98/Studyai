@@ -36,23 +36,27 @@ function renderCard(p: Product) {
 }
 
 describe("ProductCard", () => {
-  it("renders product name and formatted prices", () => {
+  it("renders product name and formatted prices", async () => {
     renderCard(product);
-    expect(screen.getByText("Prakriti Bone Relief")).toBeInTheDocument();
+    // `findBy` waits for (and act-wraps) the AuthProvider's pending session
+    // check to settle, rather than asserting synchronously against a
+    // still-updating tree.
+    expect(await screen.findByText("Prakriti Bone Relief")).toBeInTheDocument();
     expect(screen.getByText("Rs. 999")).toBeInTheDocument();
     expect(screen.getByText("Rs. 1,399")).toBeInTheDocument();
   });
 
-  it("shows a Sale badge when discounted", () => {
+  it("shows a Sale badge when discounted", async () => {
     renderCard(product);
-    expect(screen.getByText("Sale")).toBeInTheDocument();
+    expect(await screen.findByText("Sale")).toBeInTheDocument();
   });
 
-  it("shows In Stock / Out of Stock status", () => {
-    renderCard(product);
-    expect(screen.getByText("In Stock")).toBeInTheDocument();
+  it("shows In Stock / Out of Stock status", async () => {
+    const { unmount } = renderCard(product);
+    expect(await screen.findByText("In Stock")).toBeInTheDocument();
+    unmount();
 
     renderCard({ ...product, stockQuantity: 0 });
-    expect(screen.getByText("Out of Stock")).toBeInTheDocument();
+    expect(await screen.findByText("Out of Stock")).toBeInTheDocument();
   });
 });

@@ -77,7 +77,19 @@ export default function Navbar() {
 
         <nav className="hidden items-center gap-6 xl:flex">
           {navLinks.map((link) => {
-            const isActive = link.to === "/" ? location.pathname === "/" : location.pathname + location.search === link.to;
+            const isBestsellerLink = link.to.includes("bestseller=true");
+            const onBestsellerView = location.pathname === "/shop" && location.search.includes("bestseller=true");
+            // "All Products" stays highlighted for any /shop browsing (e.g.
+            // filtered by category) except the dedicated Bestsellers view,
+            // rather than only matching the exact bare "/shop" URL.
+            const isActive =
+              link.to === "/"
+                ? location.pathname === "/"
+                : isBestsellerLink
+                  ? onBestsellerView
+                  : link.to === "/shop"
+                    ? location.pathname === "/shop" && !onBestsellerView
+                    : location.pathname === link.to;
             return (
               <Link
                 key={link.label}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { getProduct } from "../api/products";
 import { formatPaise, type Product } from "../api/types";
 import { useCart } from "../context/CartContext";
@@ -8,13 +8,33 @@ import { useAuth } from "../context/AuthContext";
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<Product | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [status, setStatus] = useState<"idle" | "adding" | "added" | "error">("idle");
   const { addItem } = useCart();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (slug) getProduct(slug).then((r) => setProduct(r.product));
+    if (!slug) return;
+    setProduct(null);
+    setNotFound(false);
+    getProduct(slug)
+      .then((r) => setProduct(r.product))
+      .catch(() => setNotFound(true));
   }, [slug]);
+
+  if (notFound) {
+    return (
+      <div className="container py-20 text-center">
+        <h1 className="font-serif text-2xl font-semibold">Product not found</h1>
+        <p className="mt-2 text-muted">This product may have been removed or is no longer available.</p>
+        <Link to="/shop" className="btn-primary mt-6 inline-flex">
+          Back to Shop
+        </Link>
+      </div>
+    );
+  }
 
   if (!product) return <div className="container py-20 text-center text-muted">Loading…</div>;
 
@@ -49,7 +69,7 @@ export default function ProductDetail() {
           disabled={status === "adding" || product.stockQuantity === 0}
           onClick={async () => {
             if (!user) {
-              window.location.href = "/login";
+              navigate("/login", { state: { from: location } });
               return;
             }
             setStatus("adding");

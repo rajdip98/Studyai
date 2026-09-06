@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { adminApi } from "../../api/admin";
+import { listCategories } from "../../api/products";
 import { ApiError } from "../../api/client";
-import type { Product } from "../../api/types";
+import type { Category, Product } from "../../api/types";
 import { formatPaise } from "../../api/types";
 
 interface FormState {
@@ -14,6 +15,7 @@ interface FormState {
   stockQuantity: string;
   sku: string;
   isActive: boolean;
+  categoryId: string;
   images: string[];
 }
 
@@ -27,26 +29,47 @@ const emptyForm: FormState = {
   stockQuantity: "0",
   sku: "",
   isActive: true,
+  categoryId: "",
   images: [],
 };
 
+// Turns "My New Product!" into "my-new-product" so admin-created products
+// always get a usable URL slug, even if never manually edited.
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function load() {
-    adminApi.listProducts().then((r) => setProducts(r.items));
+    adminApi
+      .listProducts()
+      .then((r) => setProducts(r.items))
+      .finally(() => setLoading(false));
   }
 
   useEffect(load, []);
+  useEffect(() => {
+    listCategories().then((r) => setCategories(r.categories));
+  }, []);
 
   function startCreate() {
     setEditingSlug("__new__");
     setForm(emptyForm);
+    setSlugTouched(false);
     setError(null);
   }
 
@@ -62,9 +85,15 @@ export default function AdminProducts() {
       stockQuantity: p.stockQuantity.toString(),
       sku: p.sku ?? "",
       isActive: p.isActive ?? true,
+      categoryId: p.category?.id ?? "",
       images: p.images,
     });
+    setSlugTouched(true);
     setError(null);
+  }
+
+  function handleNameChange(name: string) {
+    setForm((f) => ({ ...f, name, slug: slugTouched ? f.slug : slugify(name) }));
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -91,8 +120,11 @@ export default function AdminProducts() {
     setSaving(true);
     setError(null);
     try {
+      const slug = slugify(form.slug) || slugify(form.name);
+      if (!slug) throw new ApiError(400, "INVALID_SLUG", "Please enter a product name or slug.");
+
       const payload = {
-        slug: form.slug.trim(),
+        slug,
         name: form.name.trim(),
         subtitle: form.subtitle.trim() || undefined,
         description: form.description.trim(),
@@ -101,6 +133,7 @@ export default function AdminProducts() {
         stockQuantity: Number(form.stockQuantity),
         sku: form.sku.trim(),
         isActive: form.isActive,
+        categoryId: form.categoryId || null,
         images: form.images,
       };
 
@@ -131,8 +164,23 @@ export default function AdminProducts() {
         </h1>
         <form className="mt-6 space-y-4" onSubmit={onSubmit}>
           <div className="grid grid-cols-2 gap-4">
-            <input className="input-field" placeholder="Product name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <input className="input-field" placeholder="Slug (url-friendly)" required value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+            <input
+              className="input-field"
+              placeholder="Product name"
+              required
+              value={form.name}
+              onChange={(e) => handleNameChange(e.target.value)}
+            />
+            <input
+              className="input-field"
+              placeholder="Slug (url-friendly)"
+              required
+              value={form.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                setForm({ ...form, slug: e.target.value });
+              }}
+            />
           </div>
           <input className="input-field" placeholder="Subtitle" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
           <textarea className="input-field !h-28" placeholder="Description" required value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
@@ -141,7 +189,21 @@ export default function AdminProducts() {
             <input className="input-field" type="number" min="0" step="1" placeholder="MRP (Rs.)" required value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} />
             <input className="input-field" type="number" min="0" step="1" placeholder="Stock qty" required value={form.stockQuantity} onChange={(e) => setForm({ ...form, stockQuantity: e.target.value })} />
           </div>
-          <input className="input-field" placeholder="SKU" required value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+          <div className="grid grid-cols-2 gap-4">
+            <input className="input-field" placeholder="SKU" required value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+            <select
+              className="input-field"
+              value={form.categoryId}
+              onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+            >
+              <option value="">No category</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} />
             Visible on storefront
@@ -193,26 +255,29 @@ export default function AdminProducts() {
       </div>
 
       <div className="mt-6 space-y-3">
-        {products.map((p) => (
-          <div key={p.id} className="card flex items-center gap-4 p-3">
-            <div className="h-14 w-14 flex-shrink-0 rounded-base bg-surface-subtle">
-              {p.images[0] && <img src={p.images[0]} alt="" className="h-full w-full object-cover" />}
+        {loading && <p className="text-sm text-muted">Loading products…</p>}
+        {!loading &&
+          products.map((p) => (
+            <div key={p.id} className="card flex items-center gap-4 p-3">
+              <div className="h-14 w-14 flex-shrink-0 rounded-base bg-surface-subtle">
+                {p.images[0] && <img src={p.images[0]} alt="" className="h-full w-full object-cover" />}
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">{p.name}</p>
+                <p className="text-sm text-muted">
+                  {formatPaise(p.priceInPaise)} · Stock: {p.stockQuantity}
+                  {p.category ? ` · ${p.category.name}` : ""}
+                </p>
+              </div>
+              <button className="text-sm font-medium text-primary" onClick={() => toggleActive(p)}>
+                {p.isActive ? "Active" : "Hidden"}
+              </button>
+              <button className="text-sm font-medium" onClick={() => startEdit(p)}>
+                Edit
+              </button>
             </div>
-            <div className="flex-1">
-              <p className="font-medium">{p.name}</p>
-              <p className="text-sm text-muted">
-                {formatPaise(p.priceInPaise)} · Stock: {p.stockQuantity}
-              </p>
-            </div>
-            <button className="text-sm font-medium text-primary" onClick={() => toggleActive(p)}>
-              {p.isActive ? "Active" : "Hidden"}
-            </button>
-            <button className="text-sm font-medium" onClick={() => startEdit(p)}>
-              Edit
-            </button>
-          </div>
-        ))}
-        {products.length === 0 && <p className="text-sm text-muted">No products yet.</p>}
+          ))}
+        {!loading && products.length === 0 && <p className="text-sm text-muted">No products yet.</p>}
       </div>
     </div>
   );

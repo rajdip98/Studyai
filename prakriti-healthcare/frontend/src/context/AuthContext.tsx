@@ -5,7 +5,7 @@ import type { AuthUser } from "../api/types";
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string, totpCode?: string) => Promise<{ requires2fa?: boolean }>;
+  login: (email: string, password: string, totpCode?: string) => Promise<{ requires2fa?: boolean; user?: AuthUser }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string, totpCode?: string) => {
     const result = await authApi.login(email, password, totpCode);
     if (result.user) setUser(result.user);
-    return { requires2fa: result.requires2fa };
+    return { requires2fa: result.requires2fa, user: result.user };
   }, []);
 
   const logout = useCallback(async () => {

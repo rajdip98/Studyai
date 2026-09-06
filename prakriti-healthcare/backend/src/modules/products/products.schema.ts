@@ -29,7 +29,10 @@ export const createProductSchema = z.object({
   isBestseller: z.boolean().default(false),
   tags: z.array(z.string().max(50)).max(20).default([]),
   ingredients: z.array(z.string().max(80)).max(30).default([]),
-  categoryId: z.string().uuid().optional(),
+  // Nullable (not just optional) so PATCH can explicitly clear a product's
+  // category — omitting the field on a partial update leaves it unchanged,
+  // but sending `categoryId: null` removes it.
+  categoryId: z.string().uuid().nullable().optional(),
 });
 
 export const updateProductSchema = createProductSchema.partial();

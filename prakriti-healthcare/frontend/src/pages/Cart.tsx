@@ -3,11 +3,15 @@ import { useCart } from "../context/CartContext";
 import { formatPaise } from "../api/types";
 
 export default function Cart() {
-  const { cart, updateItem, removeItem } = useCart();
+  const { cart, loading, updateItem, removeItem } = useCart();
   const navigate = useNavigate();
 
   const items = cart?.items ?? [];
   const subtotal = items.reduce((sum, i) => sum + i.product.priceInPaise * i.quantity, 0);
+
+  if (loading) {
+    return <div className="container py-20 text-center text-muted">Loading your cart…</div>;
+  }
 
   if (items.length === 0) {
     return (

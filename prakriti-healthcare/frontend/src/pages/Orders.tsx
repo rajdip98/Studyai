@@ -5,15 +5,21 @@ import { formatPaise } from "../api/types";
 
 export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    ordersApi.list().then((r) => setOrders(r.orders));
+    ordersApi
+      .list()
+      .then((r) => setOrders(r.orders))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <div className="container py-12">
       <h1 className="font-serif text-2xl font-semibold">My Orders</h1>
-      {orders.length === 0 ? (
+      {loading ? (
+        <p className="mt-6 text-muted">Loading your orders…</p>
+      ) : orders.length === 0 ? (
         <p className="mt-6 text-muted">You haven't placed any orders yet.</p>
       ) : (
         <div className="mt-6 space-y-4">

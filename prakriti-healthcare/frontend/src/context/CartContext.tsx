@@ -6,6 +6,11 @@ import { useAuth } from "./AuthContext";
 interface CartContextValue {
   cart: Cart | null;
   itemCount: number;
+  /** True until the first cart fetch (or the decision to skip it, for a
+   * logged-out visitor) has resolved. Callers should wait for this before
+   * treating an empty cart as genuinely empty — otherwise a real cart with
+   * items briefly flashes an "empty" message while it's still loading. */
+  loading: boolean;
   refreshCart: () => Promise<void>;
   addItem: (productId: string, quantity?: number) => Promise<void>;
   updateItem: (productId: string, quantity: number) => Promise<void>;
@@ -17,6 +22,7 @@ const CartContext = createContext<CartContextValue | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [cart, setCart] = useState<Cart | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const refreshCart = useCallback(async () => {
     if (!user) {
@@ -32,7 +38,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   useEffect(() => {
-    refreshCart();
+    setLoading(true);
+    refreshCart().finally(() => setLoading(false));
   }, [refreshCart]);
 
   const addItem = useCallback(
@@ -62,7 +69,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const itemCount = cart?.items.reduce((sum, i) => sum + i.quantity, 0) ?? 0;
 
   return (
-    <CartContext.Provider value={{ cart, itemCount, refreshCart, addItem, updateItem, removeItem }}>
+    <CartContext.Provider value={{ cart, itemCount, loading, refreshCart, addItem, updateItem, removeItem }}>
       {children}
     </CartContext.Provider>
   );

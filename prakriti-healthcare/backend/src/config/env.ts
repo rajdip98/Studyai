@@ -9,6 +9,9 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
 
   CORS_ORIGINS: z.string().min(1),
+  // Base URL of the deployed frontend, used to build clickable links in
+  // transactional emails (email verification, password reset).
+  FRONTEND_URL: z.string().default("http://localhost:5173"),
 
   DATABASE_URL: z.string().min(1),
   REDIS_URL: z.string().min(1),

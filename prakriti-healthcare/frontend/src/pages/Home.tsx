@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getProduct, listCategories, listProducts } from "../api/products";
 import type { Category, Product } from "../api/types";
 import { formatPaise } from "../api/types";
@@ -41,6 +41,8 @@ export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [heroBanner, setHeroBanner] = useState<PublicSiteAsset | null>(null);
   const [heroProduct, setHeroProduct] = useState<Product | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
   const { addItem } = useCart();
   const { user } = useAuth();
 
@@ -119,7 +121,9 @@ export default function Home() {
                 </Link>
                 {heroProduct && (
                   <button
-                    onClick={() => (user ? addItem(heroProduct.id, 1) : (window.location.href = "/login"))}
+                    onClick={() =>
+                      user ? addItem(heroProduct.id, 1) : navigate("/login", { state: { from: location } })
+                    }
                     className="flex items-center gap-1.5 rounded-xl bg-surface-cream px-5 py-3.5 font-semibold text-gold-dark shadow-sm transition-all hover:bg-gold-light"
                   >
                     <Icon name="add_shopping_cart" className="text-lg" />

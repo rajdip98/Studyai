@@ -8,9 +8,10 @@ import { ApiError } from "../api/client";
 import { listPublicSiteAssets, type PublicSiteAsset } from "../api/siteAssets";
 
 export default function Checkout() {
-  const { cart, refreshCart } = useCart();
+  const { cart, loading: cartLoading, refreshCart } = useCart();
   const navigate = useNavigate();
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addressesLoading, setAddressesLoading] = useState(true);
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const [showNewAddress, setShowNewAddress] = useState(false);
   const [form, setForm] = useState({ fullName: "", phone: "", line1: "", city: "", state: "", postalCode: "" });
@@ -19,17 +20,25 @@ export default function Checkout() {
   const [paymentQr, setPaymentQr] = useState<PublicSiteAsset | null>(null);
 
   useEffect(() => {
-    addressesApi.list().then((r) => {
-      setAddresses(r.addresses);
-      const def = r.addresses.find((a) => a.isDefault) ?? r.addresses[0];
-      if (def) setSelectedAddressId(def.id);
-      else setShowNewAddress(true);
-    });
+    addressesApi
+      .list()
+      .then((r) => {
+        setAddresses(r.addresses);
+        const def = r.addresses.find((a) => a.isDefault) ?? r.addresses[0];
+        if (def) setSelectedAddressId(def.id);
+        else setShowNewAddress(true);
+      })
+      .catch(() => setShowNewAddress(true))
+      .finally(() => setAddressesLoading(false));
     listPublicSiteAssets("PAYMENT_QR").then((r) => setPaymentQr(r.assets[0] ?? null));
   }, []);
 
   const items = cart?.items ?? [];
   const subtotal = items.reduce((sum, i) => sum + i.product.priceInPaise * i.quantity, 0);
+
+  if (cartLoading || addressesLoading) {
+    return <div className="container py-20 text-center text-muted">Loading checkout…</div>;
+  }
 
   async function handlePlaceOrder() {
     setError(null);

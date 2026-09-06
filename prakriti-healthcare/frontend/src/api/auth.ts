@@ -15,4 +15,5 @@ export const authApi = {
   forgotPassword: (email: string) => api.post<{ message: string }>("/api/auth/forgot-password", { email }),
   resetPassword: (token: string, password: string) =>
     api.post<{ message: string }>("/api/auth/reset-password", { token, password }),
+  verifyEmail: (token: string) => api.post<{ message: string }>("/api/auth/verify-email", { token }),
 };

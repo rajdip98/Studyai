@@ -14,7 +14,7 @@ import { ApiError } from "../../api/client";
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL ?? "admin@prakritihealthcare.com";
 
 export default function AdminLogin() {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
   const [needs2fa, setNeeds2fa] = useState(false);
@@ -31,8 +31,14 @@ export default function AdminLogin() {
         setNeeds2fa(true);
         return;
       }
-      // A successful login that isn't actually an admin account still lands
-      // here (AdminApp checks the role) rather than silently granting access.
+      // The credentials were valid, but that account isn't an admin — end
+      // the session immediately rather than leaving it silently logged in
+      // with nothing to show for it (AdminApp would otherwise just
+      // re-render this same form with no explanation).
+      if (result.user && result.user.role !== "ADMIN") {
+        await logout();
+        setError("This account does not have admin access.");
+      }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {

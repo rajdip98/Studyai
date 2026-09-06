@@ -11,11 +11,15 @@ interface Props {
 
 export default function AssetManager({ type, title, description }: Props) {
   const [assets, setAssets] = useState<SiteAsset[]>([]);
+  const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function load() {
-    adminApi.listAssets(type).then((r) => setAssets(r.assets));
+    adminApi
+      .listAssets(type)
+      .then((r) => setAssets(r.assets))
+      .finally(() => setLoading(false));
   }
 
   useEffect(load, [type]);
@@ -81,7 +85,8 @@ export default function AssetManager({ type, title, description }: Props) {
             </div>
           </div>
         ))}
-        {assets.length === 0 && <p className="text-sm text-muted">No images uploaded yet.</p>}
+        {loading && <p className="text-sm text-muted">Loading…</p>}
+        {!loading && assets.length === 0 && <p className="text-sm text-muted">No images uploaded yet.</p>}
       </div>
     </div>
   );
