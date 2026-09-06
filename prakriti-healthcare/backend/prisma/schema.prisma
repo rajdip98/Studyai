@@ -1,0 +1,300 @@
+// Prakriti Healthcare — database schema
+// PostgreSQL via Prisma. All monetary values stored as integer paise (INR minor unit)
+// to avoid floating point rounding errors.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  SUPPORT
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+  FAILED
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  emailVerifiedAt   DateTime?
+  phone             String?   @unique
+  passwordHash      String
+  passwordUpdatedAt DateTime  @default(now())
+  name              String
+  role              Role      @default(CUSTOMER)
+
+  // Brute-force / account-lockout protection
+  failedLoginCount  Int       @default(0)
+  lockedUntil       DateTime?
+
+  // TOTP-based 2FA
+  totpSecret        String?
+  totpEnabled       Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses     Address[]
+  cart          Cart?
+  orders        Order[]
+  reviews       Review[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+  emailTokens   EmailToken[]
+  siteAssets    SiteAsset[]
+
+  @@index([email])
+}
+
+// Refresh tokens are stored hashed and rotated on every use (rotation + reuse
+// detection). Enables instant revocation (logout / logout-all / breach response).
+model RefreshToken {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique
+  family      String // rotation family id — reuse of a revoked token in the
+  // same family revokes the whole family (theft detection)
+  revokedAt   DateTime?
+  replacedBy  String?
+  userAgent   String?
+  ip          String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([family])
+}
+
+enum EmailTokenType {
+  VERIFY_EMAIL
+  RESET_PASSWORD
+}
+
+model EmailToken {
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String         @unique
+  type      EmailTokenType
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime       @default(now())
+
+  @@index([userId, type])
+}
+
+model Address {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  phone      String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postalCode String
+  country    String   @default("IN")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  orders Order[]
+
+  @@index([userId])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  description String?
+  iconUrl     String?
+  createdAt   DateTime @default(now())
+
+  products Product[]
+}
+
+model Product {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  subtitle        String?
+  description     String
+  images          String[]
+  priceInPaise    Int
+  mrpInPaise      Int
+  stockQuantity   Int      @default(0)
+  sku             String   @unique
+  isActive        Boolean  @default(true)
+  isBestseller    Boolean  @default(false)
+  tags            String[]
+  ingredients     String[]
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id])
+  ratingAverage   Float    @default(0)
+  ratingCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  reviews    Review[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([categoryId])
+  @@index([isActive, isBestseller])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating     Int
+  title      String?
+  body       String
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@unique([productId, userId])
+  @@index([productId])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id                String        @id @default(uuid())
+  orderNumber       String        @unique
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  addressId         String
+  address           Address       @relation(fields: [addressId], references: [id])
+  status            OrderStatus   @default(PENDING_PAYMENT)
+  subtotalInPaise   Int
+  shippingInPaise   Int           @default(0)
+  totalInPaise      Int
+  items             OrderItem[]
+  payment           Payment?
+  idempotencyKey    String        @unique
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id                 String  @id @default(uuid())
+  orderId            String
+  order              Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId          String
+  product            Product @relation(fields: [productId], references: [id])
+  quantity           Int
+  unitPriceInPaise   Int // price captured at time of purchase (immutable)
+  nameSnapshot       String
+
+  @@index([orderId])
+}
+
+// Payment gateway integration record (e.g. Razorpay/Stripe). We never store
+// raw card data — PCI scope stays with the gateway.
+model Payment {
+  id                String        @id @default(uuid())
+  orderId           String        @unique
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  gateway           String        @default("razorpay")
+  gatewayOrderId    String?
+  gatewayPaymentId  String?
+  status            PaymentStatus @default(CREATED)
+  amountInPaise     Int
+  signatureVerified Boolean       @default(false)
+  rawWebhookHash    String? // hash of last verified webhook payload (replay protection)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+// Immutable security/audit trail for sensitive actions (login, password
+// change, role change, order refund, admin actions).
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  targetType String?
+  targetId   String?
+  ip         String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+}
+
+// CMS-style content managed from the admin panel: homepage/promo banners,
+// posters, the payment QR code image, and the site logo. Rendered publicly
+// via GET /api/site-assets; managed via the admin-only endpoints.
+enum SiteAssetType {
+  HERO_BANNER
+  PROMO_BANNER
+  POSTER
+  PAYMENT_QR
+  LOGO
+}
+
+model SiteAsset {
+  id           String        @id @default(uuid())
+  type         SiteAssetType
+  url          String
+  storageKey   String // location in the storage backend (local path or S3 key), used to delete the file
+  altText      String?
+  sortOrder    Int           @default(0)
+  isActive     Boolean       @default(true)
+  uploadedById String?
+  uploadedBy   User?         @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([type, isActive])
+}

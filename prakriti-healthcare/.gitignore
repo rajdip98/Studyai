@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Env files (never commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor/OS
+.DS_Store
+
+# Prisma
+backend/prisma/migrations/dev.db
+
+# Locally-stored uploads (dev fallback when S3 isn't configured)
+backend/uploads/
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/

@@ -1,0 +1,68 @@
+name: Prakriti Healthcare CD
+
+# Builds and publishes versioned container images on every push to main once
+# CI is green. Actual deployment (triggering a rollout on your host — ECS,
+# Kubernetes, Render, Fly.io, etc.) is intentionally left as a final manual
+# step / follow-up job you fill in for your chosen platform — see
+# docs/DEPLOYMENT.md. This keeps the workflow safe to merge without
+# accidentally deploying to infrastructure that doesn't exist yet.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "prakriti-healthcare/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/prakriti-${{ matrix.service }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: prakriti-healthcare/${{ matrix.service }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Placeholder deploy job — wire this up once hosting is provisioned
+  # (see docs/DEPLOYMENT.md for target-specific instructions: Render,
+  # Railway, Fly.io, AWS ECS/App Runner). Left as a manual approval gate so
+  # nothing auto-deploys to production without a human in the loop.
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy
+        run: |
+          echo "No hosting target configured yet."
+          echo "See prakriti-healthcare/docs/DEPLOYMENT.md to wire this job up to your platform."
