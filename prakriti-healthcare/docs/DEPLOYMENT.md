@@ -7,7 +7,9 @@ concrete runbook — follow it against whichever accounts you provision.
 ## Hosting & cloud
 
 The app is two independently deployable containers (`backend/Dockerfile`,
-`frontend/Dockerfile`) plus managed Postgres and Redis. Pick one:
+`frontend/Dockerfile`) plus a database and Redis. **Database and file
+storage are Supabase** (see Database & storage below) regardless of which
+option you pick for the backend/frontend containers themselves:
 
 **Simplest — PaaS (recommended to start):**
 - **Backend**: [Render](https://render.com) / [Railway](https://railway.app) /
@@ -23,8 +25,8 @@ The app is two independently deployable containers (`backend/Dockerfile`,
   backend image, behind an **Application Load Balancer** with a WAF (AWS
   WAFv2 — enable the managed "Core rule set" + "Known bad inputs" rule
   groups) and ACM-issued TLS certificate.
-- Database → **RDS PostgreSQL** (Multi-AZ for production), Redis →
-  **ElastiCache**.
+- Database/storage → **Supabase** (as above) rather than RDS/S3, unless you
+  specifically need them in your own AWS account. Redis → **ElastiCache**.
 - Frontend → build artifacts to **S3**, served via **CloudFront** (this is
   also your CDN — see below).
 - Secrets → **AWS Secrets Manager**, injected into ECS task definitions as
@@ -53,23 +55,40 @@ is mostly copy-and-adapt.
 
 ## Database & storage
 
-- **Postgres**: schema/migrations are managed by Prisma
+This project uses **Supabase** for both:
+
+- **Postgres**: a dedicated Supabase project provides the database. Schema
+  changes are still authored and applied via Prisma
   (`backend/prisma/schema.prisma`, `prisma migrate deploy` in CI/CD before
-  each release). Take automated daily snapshots (RDS automated backups, or
-  `pg_dump` to S3 on a cron if self-hosting) with a tested restore procedure
-  — a backup you've never restored from is not a backup.
-- **Redis**: used only for rate-limit counters and Prometheus scrape state
-  right now — it's a cache, not a source of truth, so it's safe to run
-  without persistence (`--save ""`) and simply lose state on restart.
-- **Object storage**: product images belong in S3 (or an S3-compatible
-  bucket) — see `S3_*` vars in `backend/.env.example`. Never store user
-  uploads on the container's local filesystem (containers are ephemeral, and
-  it doesn't scale past one replica). This applies directly to the admin
-  panel's upload feature (`/site/in/admin` — banners, posters, payment QR,
-  product photos, all via `POST /api/admin/uploads`): it already writes to
-  S3 automatically once the `S3_*` vars are set (`backend/src/utils/storage.ts`);
-  without them it silently falls back to local disk, which is fine for local
-  development but must not be relied on in production.
+  each release) — Supabase is just the hosted Postgres underneath; nothing
+  about the migration workflow changes. Get the connection string from
+  **Project Settings → Database → Connection string** and set it as
+  `DATABASE_URL`. Supabase takes automated daily backups on paid plans; on
+  the free tier, schedule your own (`pg_dump` on a cron) and test the
+  restore procedure — a backup you've never restored from is not a backup.
+- **Row Level Security**: the backend connects with a privileged direct
+  Postgres connection, which bypasses RLS — but Supabase's own client
+  libraries/REST API connect as the `anon`/`authenticated` roles, which
+  **are** subject to RLS. This project enables RLS with no policies on every
+  table (see `backend/prisma/migrations/20260101000001_enable_rls`), which
+  is correct as long as nothing client-side ever talks to Supabase directly
+  (true here — the frontend only calls this app's own `/api/*`, never
+  Supabase's REST/GraphQL API). If you later add real Supabase Auth or
+  client-side Supabase queries, you'll need actual RLS policies instead.
+- **Object storage**: product images, banners, posters, and the payment QR
+  code (all admin-uploaded via `/site/in/admin` → `POST /api/admin/uploads`)
+  go to a Supabase Storage bucket named `site-assets` (public, 5MB limit,
+  restricted to png/jpeg/webp — see `backend/src/utils/storage.ts`). Set
+  `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (Project Settings → API —
+  the *secret* `service_role` key, never the anon/publishable one, and never
+  expose it to the frontend) to enable it; without them, uploads silently
+  fall back to local disk, which is fine for local development but must not
+  be relied on in production (containers are ephemeral, and it doesn't scale
+  past one replica).
+- **Redis**: still self-hosted/managed separately (Supabase doesn't provide
+  it) — used only for rate-limit counters and Prometheus scrape state, so
+  it's safe to run without persistence (`--save ""`) and simply lose state
+  on restart.
 
 ## Caching & CDN
 

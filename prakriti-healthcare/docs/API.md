@@ -106,7 +106,7 @@ endpoints — see SECURITY.md for how the panel itself is protected.
 | PATCH | `/orders/:id/status` | Body: `{ status }`. Audit-logged. |
 | GET | `/users` | Paginated user list. |
 | GET | `/audit-logs` | Latest 200 audit log entries. |
-| POST | `/uploads` | `multipart/form-data`, field `file`. Validates the file's real content (magic bytes) — not its filename or declared MIME type — and stores it (S3 if configured, else local disk). Returns `{ url, key }`. Rate-limited and audit-logged. |
+| POST | `/uploads` | `multipart/form-data`, field `file`. Validates the file's real content (magic bytes) — not its filename or declared MIME type — and stores it (Supabase Storage if configured, else local disk). Returns `{ url, key }`. Rate-limited and audit-logged. |
 | GET | `/site-assets` | Query: `type?`. All assets (including inactive), for the management UI. |
 | POST | `/site-assets` | Body: `{ type, url, key, altText?, sortOrder? }`. `url`/`key` come from `/uploads`. |
 | PATCH | `/site-assets/:id` | Body: `{ altText?, sortOrder?, isActive? }`. |

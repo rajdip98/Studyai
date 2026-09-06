@@ -71,7 +71,8 @@ secured (it's not just a password prompt — see "Admin panel" section).
 |------------|--------|
 | Frontend   | React 18, Vite, TypeScript, Tailwind CSS, React Router |
 | Backend    | Node.js 20, Express, TypeScript |
-| Database   | PostgreSQL (via Prisma ORM) |
+| Database   | Supabase Postgres (via Prisma ORM), RLS enabled default-deny |
+| Storage    | Supabase Storage (admin uploads: banners/posters/QR/product photos) |
 | Cache/Queue| Redis (rate limiting, token/session bookkeeping) |
 | Auth       | httpOnly JWT access + rotating opaque refresh tokens, Argon2id, optional TOTP 2FA |
 | Payments   | Razorpay (server-verified HMAC signatures + webhooks) |

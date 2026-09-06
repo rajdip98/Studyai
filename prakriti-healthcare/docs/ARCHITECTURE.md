@@ -61,7 +61,8 @@ entities:
 1. Admin uploads an image via the panel → `POST /api/admin/uploads`
    (`multipart/form-data`). The server verifies the file's real format from
    its magic bytes (never trusting the filename or declared MIME type),
-   writes it to S3 (if configured) or local disk, and returns `{ url, key }`.
+   writes it to Supabase Storage (if configured) or local disk, and returns
+   `{ url, key }`.
 2. The panel then calls `POST /api/admin/site-assets` with that `url`/`key`
    plus the content type (`HERO_BANNER`, `PAYMENT_QR`, etc.) to create the
    managed record — or, for product photos, attaches the `url` directly to a
