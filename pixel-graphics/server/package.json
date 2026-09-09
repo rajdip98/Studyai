@@ -1,0 +1,16 @@
+{
+  "name": "pixel-graphics-server",
+  "version": "1.0.0",
+  "description": "Self-hosted backend for the Pixel Graphics site: admin login + portfolio uploads.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "multer": "^2.3.0"
+  }
+}
