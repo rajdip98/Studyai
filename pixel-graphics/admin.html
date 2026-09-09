@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Studio Admin — Pixel Graphics</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300170f'/%3E%3Ccircle cx='11' cy='13' r='4' fill='%2300ffff'/%3E%3Ccircle cx='21' cy='13' r='4' fill='%23e60067'/%3E%3Ccircle cx='16' cy='21' r='4' fill='%23fddc00'/%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; }
+  ::-webkit-scrollbar { display: none; }
+  .print-grid-bg {
+    background-color: #02110c;
+    background-image: radial-gradient(rgba(203, 233, 219, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .cmyk-bar {
+    background: linear-gradient(90deg, #00ffff 0% 25%, #e60067 25% 50%, #fddc00 50% 75%, #050c09 75% 100%);
+  }
+  .glass-panel {
+    background: rgba(9, 36, 27, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 177, 193, 0.12);
+  }
+  .drop-zone.dragover { border-color: #ffb1c1; background: rgba(230,0,103,0.08); }
+  [hidden] { display: none !important; }
+
+  /* Without the icon webfont (offline / blocked CDN) the ligature names would
+     render as literal words like "lock" and "upload" — hide them instead, and
+     give icon-only controls a text label so they stay usable. */
+  .no-icon-font .material-symbols-outlined { display: none; }
+  .no-icon-font [data-icon-fallback]::after {
+    content: attr(data-icon-fallback);
+    font: 600 11px 'Space Grotesk', system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
+<script src="vendor/tailwind.js"></script>
+<script id="tailwind-config">
+  if (typeof tailwind !== 'undefined') tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container": "#09241b",
+          "on-primary": "#66002a",
+          "surface-container-highest": "#203a30",
+          "on-background": "#cbe9db",
+          "outline": "#ab888e",
+          "surface-container-low": "#052017",
+          "secondary-container": "#fddc00",
+          "on-error": "#690005",
+          "surface-dim": "#00170f",
+          "primary-container": "#e60067",
+          "on-surface": "#cbe9db",
+          "surface-variant": "#203a30",
+          "secondary-fixed": "#ffe24a",
+          "surface-bright": "#243e34",
+          "surface": "#00170f",
+          "outline-variant": "#5c3f45",
+          "error-container": "#93000a",
+          "surface-container-high": "#142f25",
+          "error": "#ffb4ab",
+          "background": "#00170f",
+          "tertiary": "#ffb691",
+          "surface-container-lowest": "#00120b",
+          "secondary": "#fff9ed",
+          "primary": "#ffb1c1",
+          "on-surface-variant": "#e4bdc3"
+        },
+        fontFamily: {
+          "headline-sm": ["Outfit"],
+          "body-lg": ["Hanken Grotesk"],
+          "body-sm": ["Hanken Grotesk"],
+          "label-lg": ["Space Grotesk"],
+          "headline-md": ["Outfit"],
+          "label-sm": ["Space Grotesk"],
+          "body-md": ["Hanken Grotesk"],
+          "headline-lg": ["Outfit"],
+          "label-md": ["Space Grotesk"],
+          "display-hero": ["Outfit"]
+        }
+      }
+    }
+  };
+</script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md print-grid-bg min-h-screen antialiased">
+<div class="fixed top-0 left-0 right-0 h-1 cmyk-bar z-[60] opacity-90"></div>
+
+<header class="w-full border-b border-emerald-900/40 bg-[#02140e]/85 backdrop-blur-xl">
+  <div class="max-w-[1100px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2 text-secondary font-headline-sm font-bold text-lg">
+      <span class="material-symbols-outlined text-primary">print</span>
+      Pixel Graphics <span class="text-tertiary font-label-sm text-xs uppercase tracking-widest ml-1">Studio Admin</span>
+    </a>
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="text-xs font-label-md uppercase tracking-wider text-on-surface-variant hover:text-secondary transition-colors">← Back to site</a>
+      <button id="logout-btn" hidden class="px-3 py-1.5 rounded-lg bg-surface-container-high border border-emerald-700/40 text-xs font-label-md uppercase tracking-wider text-on-surface-variant hover:text-white hover:border-primary/40 transition-all">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-[1100px] mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
+
+  <!-- SERVER UNREACHABLE VIEW -->
+  <section id="offline-view" hidden class="flex justify-center py-16">
+    <div class="glass-panel rounded-2xl p-8 w-full max-w-lg flex flex-col gap-4 shadow-2xl border border-secondary-fixed/30">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary-fixed text-3xl">power_off</span>
+        <h1 class="font-headline-sm text-xl text-secondary font-bold">The studio server isn’t running</h1>
+      </div>
+      <p class="text-on-surface-variant text-sm">
+        The admin panel needs its backend to sign you in, store uploads, and save your settings.
+        Opening this file directly from a folder won’t work — start the server, then use the address it prints.
+      </p>
+      <div class="rounded-xl bg-surface-container-lowest border border-emerald-800/40 p-4 font-mono text-xs text-secondary-fixed overflow-x-auto">
+        <div>cd pixel-graphics/server</div>
+        <div>npm install</div>
+        <div>npm start</div>
+      </div>
+      <p class="text-on-surface-variant text-sm">
+        Then open <span class="text-primary font-mono">http://localhost:3000/admin.html</span>
+      </p>
+      <button id="retry-btn" type="button" class="self-start px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Try Again</button>
+    </div>
+  </section>
+
+  <!-- LOGIN VIEW -->
+  <section id="login-view" hidden class="flex justify-center py-16">
+    <form id="login-form" class="glass-panel rounded-2xl p-8 w-full max-w-sm flex flex-col gap-5 shadow-2xl">
+      <div class="flex flex-col items-center gap-2 text-center">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-container to-surface-container-high border border-primary/30 flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-2xl">lock</span>
+        </div>
+        <h1 class="font-headline-sm text-xl text-secondary font-bold">Studio Admin Login</h1>
+        <p class="text-on-surface-variant text-sm">Enter the studio password to manage the portfolio.</p>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="login-password" class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Password</label>
+        <input id="login-password" type="password" required autocomplete="current-password"
+          class="w-full rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none px-4 py-3 text-secondary" />
+      </div>
+      <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-primary-container to-[#bc0053] text-white font-label-lg text-sm uppercase font-bold tracking-wider hover:brightness-110 transition-all">
+        Sign In
+      </button>
+      <p id="login-error" hidden class="text-error text-sm text-center"></p>
+    </form>
+  </section>
+
+  <!-- DASHBOARD VIEW -->
+  <section id="dashboard-view" hidden class="flex flex-col gap-8">
+
+    <!-- Site identity: logo, WhatsApp, email, address -->
+    <div class="glass-panel rounded-2xl p-6 flex flex-col gap-5">
+      <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-tertiary">storefront</span> Site Identity
+      </h2>
+
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-secondary-fixed via-primary to-cyan-400 flex-shrink-0">
+          <img id="logo-preview" alt="Current logo" class="w-full h-full rounded-full object-cover bg-surface-container-lowest" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Website logo</label>
+          <p class="text-on-surface-variant text-xs max-w-md">Used in the header, hero badge, contact card, and footer. PNG, JPG, WEBP, or SVG — square images look best.</p>
+          <div class="flex items-center gap-3">
+            <label class="cursor-pointer px-4 py-2 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">
+              Upload New Logo
+              <input id="logo-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
+            </label>
+            <button id="reset-logo-btn" type="button" class="px-4 py-2 rounded-xl bg-surface-container-lowest hover:bg-error-container/30 text-on-surface-variant hover:text-error border border-emerald-800/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Reset to Default</button>
+          </div>
+          <p id="logo-message" class="text-sm"></p>
+        </div>
+      </div>
+
+      <form id="settings-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end pt-2 border-t border-emerald-900/50">
+        <div class="flex flex-col gap-1.5 pt-4">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">WhatsApp number</label>
+          <input id="settings-whatsapp" type="text" inputmode="numeric" placeholder="e.g. 917005569637" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+          <span class="text-on-surface-variant text-xs">Digits only, with country code (e.g. 91 for India).</span>
+        </div>
+        <div class="flex flex-col gap-1.5 pt-4">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Contact email</label>
+          <input id="settings-email" type="email" placeholder="studio@example.com" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="flex flex-col gap-1.5 pt-4">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Studio address</label>
+          <input id="settings-address" type="text" placeholder="Street, City, State PIN" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="sm:col-span-3 flex items-center gap-4">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Save Site Info</button>
+          <p id="settings-message" class="text-sm"></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Change password -->
+    <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+      <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-tertiary">key</span> Change Password
+      </h2>
+      <form id="password-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Current password</label>
+          <input id="current-password" type="password" required autocomplete="current-password" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">New password</label>
+          <input id="new-password" type="password" required minlength="8" autocomplete="new-password" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Confirm new password</label>
+          <input id="confirm-password" type="password" required minlength="8" autocomplete="new-password" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="sm:col-span-3 flex items-center gap-4">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Update Password</button>
+          <p id="password-message" class="text-sm"></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Upload -->
+    <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+      <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-tertiary">upload</span> Upload Work
+      </h2>
+      <p class="text-on-surface-variant text-sm">Add pictures, posters, banners, product photos, or design files (PDF, AI, PSD, EPS, CDR, SVG, ZIP). Pick from your computer's files or your phone's photo library / Files app — up to 30MB each.</p>
+
+      <form id="upload-form" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Title</label>
+            <input id="upload-title" type="text" placeholder="e.g. Executive Matte Business Cards" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Category</label>
+            <select id="upload-category" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary">
+              <option value="banners">Banners &amp; Flex</option>
+              <option value="cards">Cards &amp; Stationery</option>
+              <option value="merch">Custom Merch</option>
+              <option value="vinyl">Vinyl &amp; Fleet</option>
+              <option value="other" selected>Other</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Description (optional)</label>
+            <input id="upload-description" type="text" placeholder="Material, finish, dimensions…" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+          </div>
+        </div>
+
+        <label id="drop-zone" for="file-input" class="drop-zone cursor-pointer flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-emerald-700/40 py-10 text-center transition-all">
+          <span class="material-symbols-outlined text-3xl text-primary">cloud_upload</span>
+          <span class="text-secondary font-label-md text-sm">Drag &amp; drop files here, or tap to browse</span>
+          <span class="text-on-surface-variant text-xs">Images, PDF, AI, PSD, EPS, CDR, SVG, ZIP — up to 30MB each</span>
+          <input id="file-input" type="file" multiple hidden accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.pdf,.ai,.psd,.eps,.cdr,.zip,image/*,application/pdf" />
+        </label>
+
+        <div id="upload-queue" class="flex flex-col gap-2"></div>
+      </form>
+    </div>
+
+    <!-- Portfolio management -->
+    <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined text-tertiary">photo_library</span> Published Works
+        </h2>
+        <span id="portfolio-count" class="text-xs font-label-sm text-on-surface-variant uppercase tracking-wider"></span>
+      </div>
+      <div id="admin-portfolio-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <p id="admin-portfolio-empty" hidden class="text-on-surface-variant text-sm text-center py-6">No works uploaded yet. Use the form above to add your first piece.</p>
+    </div>
+
+  </section>
+</main>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const loginView = $('login-view');
+  const dashboardView = $('dashboard-view');
+  const offlineView = $('offline-view');
+  const logoutBtn = $('logout-btn');
+
+  // With the icon webfont active, "print" renders as a single square glyph
+  // (~1em wide); without it the literal word renders several times wider.
+  // Measuring is reliable where document.fonts.check() is not — check()
+  // reports true for a family that was never declared at all.
+  function hideIconsIfFontMissing() {
+    const probe = document.createElement('span');
+    probe.className = 'material-symbols-outlined';
+    probe.textContent = 'print';
+    probe.style.cssText = 'position:absolute;visibility:hidden;font-size:24px;';
+    document.body.appendChild(probe);
+    const width = probe.getBoundingClientRect().width;
+    probe.remove();
+    if (width > 40) document.documentElement.classList.add('no-icon-font');
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(hideIconsIfFontMissing);
+  } else {
+    window.addEventListener('load', hideIconsIfFontMissing);
+  }
+
+  const CATEGORY_LABELS = { banners: 'Banners & Flex', cards: 'Cards & Stationery', merch: 'Custom Merch', vinyl: 'Vinyl & Fleet', other: 'Other' };
+  const FILE_ICONS = { 'application/pdf': 'picture_as_pdf', 'application/zip': 'folder_zip' };
+
+  // Thrown when the backend can't be reached at all (server stopped, or the
+  // file was opened straight from disk over file://).
+  class OfflineError extends Error {
+    constructor() {
+      super('Can’t reach the studio server.');
+      this.offline = true;
+    }
+  }
+
+  async function getCsrfToken() {
+    const res = await fetch('/api/csrf-token', { credentials: 'same-origin' });
+    const data = await res.json();
+    return data.token;
+  }
+
+  async function api(path, options = {}) {
+    const opts = { credentials: 'same-origin', ...options };
+    let res;
+    try {
+      if (opts.method && opts.method !== 'GET') {
+        opts.headers = { ...(opts.headers || {}), 'x-csrf-token': await getCsrfToken() };
+      }
+      res = await fetch(path, opts);
+    } catch {
+      showOffline();
+      throw new OfflineError();
+    }
+
+    let data = null;
+    try { data = await res.json(); } catch { /* no body */ }
+
+    // Only a lost session sends us back to the login screen. A 401 from
+    // change-password just means the typed current password was wrong.
+    if (data && data.code === 'SESSION_EXPIRED' && !path.endsWith('/session')) {
+      showLogin();
+      $('login-error').textContent = 'Your session expired. Please sign in again.';
+      $('login-error').hidden = false;
+    }
+
+    if (!res.ok) throw new Error((data && data.message) || `Request failed (${res.status})`);
+    return data;
+  }
+
+  function showDashboard() {
+    loginView.hidden = true;
+    dashboardView.hidden = false;
+    logoutBtn.hidden = false;
+    loadPortfolio();
+    loadSettings();
+  }
+
+  function showLogin() {
+    loginView.hidden = false;
+    dashboardView.hidden = true;
+    logoutBtn.hidden = true;
+    offlineView.hidden = true;
+  }
+
+  function showOffline() {
+    loginView.hidden = true;
+    dashboardView.hidden = true;
+    logoutBtn.hidden = true;
+    offlineView.hidden = false;
+  }
+
+  async function checkSession() {
+    // Opened straight from disk: there is no server to talk to at all.
+    if (location.protocol === 'file:') {
+      showOffline();
+      return;
+    }
+    try {
+      await api('/api/admin/session');
+      showDashboard();
+    } catch (err) {
+      if (!err.offline) showLogin();
+    }
+  }
+
+  $('retry-btn').addEventListener('click', () => {
+    if (location.protocol === 'file:') return;
+    checkSession();
+  });
+
+  // --- Login ---
+  $('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorEl = $('login-error');
+    errorEl.hidden = true;
+    try {
+      await api('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: $('login-password').value })
+      });
+      $('login-password').value = '';
+      showDashboard();
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.hidden = false;
+    }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    try { await api('/api/admin/logout', { method: 'POST' }); } catch { /* ignore */ }
+    showLogin();
+  });
+
+  // A status line must never outlive the values it described — otherwise a
+  // stale "Saved." sits next to a field the user is currently editing (and
+  // native form validation can block submit without clearing it).
+  function clearOnEdit(formId, messageId) {
+    $(formId).addEventListener('input', () => {
+      const el = $(messageId);
+      el.textContent = '';
+      el.className = 'text-sm';
+    });
+  }
+  clearOnEdit('settings-form', 'settings-message');
+  clearOnEdit('password-form', 'password-message');
+
+  // --- Site identity: logo, WhatsApp, email, address ---
+  const FALLBACK_LOGO_SRC = 'assets/logo-header.jpg';
+
+  async function loadSettings() {
+    try {
+      const settings = await api('/api/settings');
+      $('logo-preview').src = settings.logoUrl || FALLBACK_LOGO_SRC;
+      $('settings-whatsapp').value = settings.whatsappNumber || '';
+      $('settings-email').value = settings.email || '';
+      $('settings-address').value = settings.address || '';
+    } catch {
+      $('logo-preview').src = FALLBACK_LOGO_SRC;
+    }
+  }
+
+  $('logo-input').addEventListener('change', async () => {
+    const file = $('logo-input').files[0];
+    if (!file) return;
+    const messageEl = $('logo-message');
+    messageEl.textContent = 'Uploading…';
+    messageEl.className = 'text-sm text-tertiary';
+
+    const formData = new FormData();
+    formData.append('logo', file);
+
+    try {
+      const data = await api('/api/admin/logo', { method: 'POST', body: formData });
+      $('logo-preview').src = data.settings.logoUrl;
+      messageEl.textContent = 'Logo updated.';
+      messageEl.className = 'text-sm text-emerald-400';
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.className = 'text-sm text-error';
+    }
+    $('logo-input').value = '';
+  });
+
+  $('reset-logo-btn').addEventListener('click', async () => {
+    const messageEl = $('logo-message');
+    try {
+      const data = await api('/api/admin/logo', { method: 'DELETE' });
+      $('logo-preview').src = data.settings.logoUrl || FALLBACK_LOGO_SRC;
+      messageEl.textContent = 'Reverted to the default logo.';
+      messageEl.className = 'text-sm text-emerald-400';
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.className = 'text-sm text-error';
+    }
+  });
+
+  $('settings-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const messageEl = $('settings-message');
+    messageEl.textContent = '';
+    messageEl.className = 'text-sm';
+
+    try {
+      await api('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          whatsappNumber: $('settings-whatsapp').value,
+          email: $('settings-email').value,
+          address: $('settings-address').value
+        })
+      });
+      messageEl.textContent = 'Site info saved.';
+      messageEl.classList.add('text-emerald-400');
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.classList.add('text-error');
+    }
+  });
+
+  $('password-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const messageEl = $('password-message');
+    messageEl.textContent = '';
+    messageEl.className = 'text-sm';
+
+    const currentPassword = $('current-password').value;
+    const newPassword = $('new-password').value;
+    const confirmPassword = $('confirm-password').value;
+
+    if (newPassword !== confirmPassword) {
+      messageEl.textContent = 'New passwords do not match.';
+      messageEl.classList.add('text-error');
+      return;
+    }
+
+    try {
+      const data = await api('/api/admin/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      messageEl.textContent = data.message || 'Password updated.';
+      messageEl.classList.add('text-emerald-400');
+      e.target.reset();
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.classList.add('text-error');
+    }
+  });
+
+  // --- Upload ---
+  const dropZone = $('drop-zone');
+  const fileInput = $('file-input');
+  const uploadQueue = $('upload-queue');
+
+  ['dragenter', 'dragover'].forEach((evt) =>
+    dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); })
+  );
+  ['dragleave', 'drop'].forEach((evt) =>
+    dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); })
+  );
+  dropZone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) handleFiles(fileInput.files);
+    fileInput.value = '';
+  });
+
+  async function handleFiles(fileList) {
+    const files = Array.from(fileList);
+    const baseTitle = $('upload-title').value.trim();
+    const category = $('upload-category').value;
+    const description = $('upload-description').value.trim();
+
+    for (const file of files) {
+      const row = document.createElement('div');
+      row.className = 'flex items-center justify-between gap-3 rounded-xl bg-surface-container-lowest border border-emerald-800/30 px-4 py-2.5 text-sm';
+      row.innerHTML = `<span class="text-secondary truncate">${escapeHtml(file.name)}</span><span class="text-tertiary font-label-sm text-xs uppercase">Uploading…</span>`;
+      uploadQueue.prepend(row);
+
+      const title = files.length === 1 ? (baseTitle || file.name) : (baseTitle ? `${baseTitle} — ${file.name}` : file.name);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', title);
+      formData.append('category', category);
+      formData.append('description', description);
+
+      try {
+        await api('/api/admin/portfolio', { method: 'POST', body: formData });
+        row.querySelector('span:last-child').textContent = 'Done';
+        row.querySelector('span:last-child').className = 'text-emerald-400 font-label-sm text-xs uppercase';
+      } catch (err) {
+        row.querySelector('span:last-child').textContent = err.message;
+        row.querySelector('span:last-child').className = 'text-error font-label-sm text-xs uppercase';
+      }
+    }
+
+    $('upload-title').value = '';
+    $('upload-description').value = '';
+    loadPortfolio();
+  }
+
+  // --- Portfolio grid ---
+  async function loadPortfolio() {
+    const grid = $('admin-portfolio-grid');
+    const empty = $('admin-portfolio-empty');
+    const count = $('portfolio-count');
+    try {
+      const data = await api('/api/portfolio');
+      const items = data.items || [];
+      count.textContent = `${items.length} item${items.length === 1 ? '' : 's'}`;
+      empty.hidden = items.length > 0;
+      grid.innerHTML = items.map(renderAdminCard).join('');
+      grid.querySelectorAll('[data-delete-id]').forEach((btn) => {
+        btn.addEventListener('click', () => deleteItem(btn.getAttribute('data-delete-id')));
+      });
+    } catch (err) {
+      grid.innerHTML = `<p class="text-error text-sm col-span-full">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  function renderAdminCard(item) {
+    const preview = (item.isImage || item.mimeType === 'image/svg+xml')
+      ? `<img src="${item.fileUrl}" alt="${escapeHtml(item.title)}" class="w-full h-36 object-cover rounded-lg" />`
+      : `<div class="w-full h-36 rounded-lg bg-surface-container-high flex items-center justify-center"><span class="material-symbols-outlined text-4xl text-tertiary">${FILE_ICONS[item.mimeType] || 'draft'}</span></div>`;
+
+    return `
+      <div class="rounded-xl border border-emerald-800/30 bg-surface-container p-3 flex flex-col gap-2">
+        ${preview}
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <p class="text-secondary text-sm font-semibold truncate">${escapeHtml(item.title)}</p>
+            <p class="text-on-surface-variant text-xs">${CATEGORY_LABELS[item.category] || 'Other'}</p>
+          </div>
+          <button data-delete-id="${item.id}" data-icon-fallback="Delete" class="shrink-0 p-1.5 rounded-lg hover:bg-error-container/30 text-on-surface-variant hover:text-error transition-colors" title="Delete">
+            <span class="material-symbols-outlined text-lg">delete</span>
+          </button>
+        </div>
+      </div>`;
+  }
+
+  async function deleteItem(id) {
+    if (!confirm('Remove this item from the portfolio?')) return;
+    try {
+      await api(`/api/admin/portfolio/${id}`, { method: 'DELETE' });
+      loadPortfolio();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  checkSession();
+})();
+</script>
+</body></html>

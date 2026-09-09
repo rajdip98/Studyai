@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pixel Graphics — Design &amp; Print Solution, Dhaleshwar</title>
+<meta name="description" content="Commercial design and print studio in Dhaleshwar, Agartala: flex banners, visiting cards, ID cards, mementos, custom apparel, and corporate branding with same-day flex production."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300170f'/%3E%3Ccircle cx='11' cy='13' r='4' fill='%2300ffff'/%3E%3Ccircle cx='21' cy='13' r='4' fill='%23e60067'/%3E%3Ccircle cx='16' cy='21' r='4' fill='%23fddc00'/%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+    }
+    ::-webkit-scrollbar { display: none; }
+
+    /* Without the icon webfont (offline / blocked CDN) the ligature names would
+       render as literal words like "print" and "chat" — hide them instead, and
+       give icon-only controls a text label so they stay usable. */
+    .no-icon-font .material-symbols-outlined { display: none; }
+    .no-icon-font [data-icon-fallback]::after {
+      content: attr(data-icon-fallback);
+      font: 600 11px 'Space Grotesk', system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* The label needs more room than the square icon slot it replaces. */
+    .no-icon-font a[data-icon-fallback] { width: auto !important; padding: 0 0.6rem; }
+
+    /* Print alignment guides & dot grid */
+    .print-grid-bg {
+      background-color: #02110c;
+      background-image: radial-gradient(rgba(203, 233, 219, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .cmyk-bar {
+      background: linear-gradient(90deg, #00ffff 0% 25%, #e60067 25% 50%, #fddc00 50% 75%, #050c09 75% 100%);
+    }
+    .glass-panel {
+      background: rgba(9, 36, 27, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 177, 193, 0.12);
+    }
+    .glass-panel-glow {
+      position: relative;
+    }
+    .glass-panel-glow::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(230,0,103,0.4), rgba(253,220,0,0.2), rgba(0,255,255,0.15));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  </style>
+<script src="vendor/tailwind.js"></script>
+<script id="tailwind-config">
+    if (typeof tailwind !== 'undefined') tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#09241b",
+            "primary-fixed": "#ffd9df",
+            "on-primary": "#66002a",
+            "surface-container-highest": "#203a30",
+            "on-background": "#cbe9db",
+            "on-secondary-container": "#706000",
+            "inverse-on-surface": "#1b352c",
+            "outline": "#ab888e",
+            "tertiary-fixed-dim": "#ffb691",
+            "tertiary-container": "#c35300",
+            "on-error-container": "#ffdad6",
+            "surface-container-low": "#052017",
+            "secondary-container": "#fddc00",
+            "on-error": "#690005",
+            "on-tertiary-container": "#fffdff",
+            "on-primary-container": "#fffdff",
+            "on-tertiary-fixed": "#341100",
+            "inverse-primary": "#bc0053",
+            "on-secondary-fixed-variant": "#524600",
+            "primary-fixed-dim": "#ffb1c1",
+            "on-primary-fixed-variant": "#90003e",
+            "on-tertiary": "#552000",
+            "on-surface-variant": "#e4bdc3",
+            "surface-dim": "#00170f",
+            "primary-container": "#e60067",
+            "on-surface": "#cbe9db",
+            "tertiary-fixed": "#ffdbcb",
+            "surface-variant": "#203a30",
+            "inverse-surface": "#cbe9db",
+            "secondary-fixed": "#ffe24a",
+            "surface-bright": "#243e34",
+            "on-secondary": "#393000",
+            "surface": "#00170f",
+            "outline-variant": "#5c3f45",
+            "error-container": "#93000a",
+            "surface-tint": "#ffb1c1",
+            "surface-container-high": "#142f25",
+            "on-tertiary-fixed-variant": "#793100",
+            "error": "#ffb4ab",
+            "on-secondary-fixed": "#211b00",
+            "background": "#00170f",
+            "tertiary": "#ffb691",
+            "surface-container-lowest": "#00120b",
+            "secondary": "#fff9ed",
+            "primary": "#ffb1c1",
+            "on-primary-fixed": "#3f0017",
+            "secondary-fixed-dim": "#e3c600"
+          },
+          fontFamily: {
+            "headline-sm": ["Outfit"],
+            "body-lg": ["Hanken Grotesk"],
+            "body-sm": ["Hanken Grotesk"],
+            "label-lg": ["Space Grotesk"],
+            "headline-lg-mobile": ["Outfit"],
+            "headline-md": ["Outfit"],
+            "label-sm": ["Space Grotesk"],
+            "body-md": ["Hanken Grotesk"],
+            "headline-lg": ["Outfit"],
+            "label-md": ["Space Grotesk"],
+            "display-hero": ["Outfit"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md print-grid-bg relative selection:bg-primary-container selection:text-white antialiased">
+<!-- TOP CMYK PRINT CALIBRATION STRIP -->
+<div class="fixed top-0 left-0 right-0 h-1 cmyk-bar z-[60] opacity-90 shadow-[0_0_12px_rgba(230,0,103,0.5)]"></div>
+<!-- NAVIGATION HEADER -->
+<header class="fixed top-1 w-full z-50 bg-[#02140e]/85 backdrop-blur-xl border-b border-emerald-900/40 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+<div class="h-20 w-full px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto flex items-center justify-between gap-4">
+<!-- Brand & Registration Target Symbol -->
+<a class="flex items-center gap-3 group" href="#">
+<div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-primary-container to-surface-container-high border border-primary/30 flex items-center justify-center shadow-[0_0_20px_rgba(230,0,103,0.35)] group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-white text-2xl">print</span>
+<!-- Registration crosshair tiny -->
+<div class="absolute -top-1 -right-1 w-3 h-3 rounded-full border border-secondary-fixed/80 flex items-center justify-center">
+<span class="w-1 h-1 bg-secondary-fixed rounded-full"></span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-xl sm:text-2xl text-secondary font-bold tracking-tight">Pixel Graphics</span>
+<span class="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-label-sm uppercase font-semibold bg-primary-container/30 text-primary border border-primary/20">Studio</span>
+</div>
+<span class="font-label-sm text-xs text-tertiary uppercase tracking-widest flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            Design &amp; Print Solution • Dhaleshwar
+          </span>
+</div>
+</a>
+<!-- Navigation Links -->
+<nav class="hidden lg:flex items-center gap-1 bg-surface-container/60 p-1.5 rounded-xl border border-emerald-800/30 backdrop-blur-md">
+<a class="px-4 py-2 rounded-lg bg-surface-container-highest text-secondary font-label-md text-sm font-semibold tracking-wide border border-primary/20 shadow-sm" href="#services">Services</a>
+<a class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-high/60 font-label-md text-sm font-medium tracking-wide transition-all" href="#our-works-section">Our Works</a>
+<a class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-high/60 font-label-md text-sm font-medium tracking-wide transition-all" href="#spec-ticker">Specs</a>
+<a class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-high/60 font-label-md text-sm font-medium tracking-wide transition-all" href="#contact">Contact &amp; Proofs</a>
+<a class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-high/60 font-label-md text-sm font-medium tracking-wide transition-all" href="docs/prd.md.html">Docs</a>
+<a class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-high/60 font-label-md text-sm font-medium tracking-wide transition-all flex items-center gap-1.5" href="admin.html">
+<span class="material-symbols-outlined text-base">admin_panel_settings</span>
+Admin
+</a>
+</nav>
+<!-- Quick Action Buttons + Official Avatar -->
+<div class="flex items-center gap-2.5">
+<a class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container border border-emerald-700/40 hover:border-secondary-fixed/50 text-secondary-fixed hover:text-white transition-all shadow-sm font-label-md text-xs tracking-wider uppercase font-semibold" href="https://wa.me/917005569637" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base text-emerald-400">chat</span>
+<span data-field="whatsapp-local">7005569637</span>
+</a>
+<a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-primary-container to-[#bc0053] hover:brightness-110 text-white font-label-md text-xs tracking-wider uppercase font-bold shadow-[0_0_20px_rgba(230,0,103,0.4)] transition-all active:scale-95" href="mailto:graphicspixel18@gmail.com">
+<span class="material-symbols-outlined text-base">send</span>
+<span class="hidden md:inline">Request Quote</span>
+</a>
+<a class="w-9 h-9 rounded-xl bg-surface-container border border-emerald-700/40 hover:border-primary/50 hover:bg-surface-container-high text-on-surface-variant hover:text-primary flex items-center justify-center transition-all shadow-sm flex-shrink-0" href="admin.html" title="Studio Admin" aria-label="Studio Admin" data-icon-fallback="Admin">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+</a>
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary-fixed via-primary to-cyan-400 shadow-[0_0_14px_rgba(255,177,193,0.3)]">
+<img id="logo-header" alt="Pixel Graphics Logo" class="w-9 h-9 rounded-full object-cover border border-surface-container-lowest" src="assets/logo-header.jpg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN WRAPPER -->
+<main class="w-full pt-20 overflow-x-hidden min-h-screen">
+<!-- ==================== HERO SECTION ==================== -->
+<section class="relative w-full pt-10 pb-20 px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto">
+<!-- Subtle Decorative Atmospheric Glows -->
+<div class="absolute -top-10 left-1/4 w-96 h-96 rounded-full bg-primary-container/15 blur-[130px] pointer-events-none"></div>
+<div class="absolute top-1/3 -right-20 w-[30rem] h-[30rem] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none"></div>
+<div class="absolute bottom-10 left-10 w-80 h-80 rounded-full bg-secondary-fixed/10 blur-[120px] pointer-events-none"></div>
+<!-- Registration Marks Decorative Background Lines -->
+<div class="absolute top-8 left-4 hidden xl:flex items-center gap-2 text-emerald-600/40 text-[10px] font-mono tracking-widest select-none pointer-events-none">
+<span class="material-symbols-outlined text-sm">filter_center_focus</span>
+<span>REG_ALIGN: 24.1284° N / 91.2934° E [TRIPURA_PRESS]</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+<!-- Left Hero Text & Callout -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- CMYK & Location Badges -->
+<div class="flex flex-wrap items-center gap-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/90 border border-emerald-600/30 shadow-md">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="font-label-md text-xs uppercase tracking-wider text-secondary-fixed font-semibold">Dhaleshwar Studio</span>
+</div>
+<!-- CMYK Swatch Chips -->
+<div class="flex items-center gap-1 bg-surface-container-lowest/80 px-2.5 py-1 rounded-full border border-emerald-800/40">
+<span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.7)]" title="Cyan"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_6px_rgba(236,72,153,0.7)]" title="Magenta"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.7)]" title="Yellow"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-neutral-900 border border-neutral-700" title="Key/Black"></span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase ml-1 tracking-wider font-bold">1440 &amp; 2400 DPI CMYK</span>
+</div>
+<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/15 border border-secondary-fixed/30 text-secondary-fixed font-label-sm text-[11px] uppercase font-bold">
+<span class="material-symbols-outlined text-xs">verified</span>
+<span>Fast Dispatch</span>
+</div>
+</div>
+<!-- Main Hero Title -->
+<div class="space-y-3">
+<h1 class="font-display-hero text-4xl sm:text-5xl lg:text-6xl text-secondary font-extrabold tracking-tight leading-[1.1]">
+              Pixel Graphics
+              <span class="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-container to-secondary-fixed text-3xl sm:text-4xl lg:text-5xl font-bold mt-1">
+                Design &amp; Print Solution
+              </span>
+</h1>
+<p class="font-body-lg text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+              Dhaleshwar’s premier press for high-density flex banners, executive visiting cards, laser-cut mementos, custom apparel, and complete corporate identity branding with spot calibration.
+            </p>
+</div>
+<!-- Action CTA Group -->
+<div class="flex flex-wrap items-center gap-4 pt-2">
+<a class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-primary-container to-[#bc0053] hover:from-[#f01a7a] hover:to-primary-container text-white font-label-lg text-sm tracking-wider uppercase font-bold shadow-[0_4px_24px_rgba(230,0,103,0.45)] hover:scale-[1.02] active:scale-95 transition-all" href="https://wa.me/917005569637?text=Hello%20Pixel%20Graphics,%20I%20want%20to%20inquire%20about%20printing%20services" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-xl">chat</span>
+<span>WhatsApp: <span data-field="whatsapp-local">7005569637</span></span>
+</a>
+<a class="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-surface-container-high/90 hover:bg-surface-bright text-secondary border border-emerald-700/30 hover:border-primary/40 font-label-lg text-sm tracking-wider uppercase font-semibold transition-all shadow-md" href="mailto:graphicspixel18@gmail.com?subject=Print%20Inquiry%20-%20Pixel%20Graphics">
+<span class="material-symbols-outlined text-lg text-primary">mail</span>
+<span data-field="email">graphicspixel18@gmail.com</span>
+</a>
+</div>
+<!-- Technical Advantage Micro-Metrics -->
+<div class="grid grid-cols-3 gap-3 pt-3">
+<div class="glass-panel p-3.5 rounded-xl flex flex-col gap-1 border-l-2 border-l-cyan-400">
+<div class="flex items-center gap-1.5 text-cyan-300">
+<span class="material-symbols-outlined text-base">speed</span>
+<span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Speed</span>
+</div>
+<span class="font-headline-sm text-sm sm:text-base text-secondary font-bold">Same-Day Flex</span>
+<span class="text-[11px] text-on-surface-variant">Priority turnaround</span>
+</div>
+<div class="glass-panel p-3.5 rounded-xl flex flex-col gap-1 border-l-2 border-l-primary-container">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-base">photo_filter</span>
+<span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Quality</span>
+</div>
+<span class="font-headline-sm text-sm sm:text-base text-secondary font-bold">2400 DPI Max</span>
+<span class="text-[11px] text-on-surface-variant">Crisp fine text</span>
+</div>
+<div class="glass-panel p-3.5 rounded-xl flex flex-col gap-1 border-l-2 border-l-secondary-fixed">
+<div class="flex items-center gap-1.5 text-secondary-fixed">
+<span class="material-symbols-outlined text-base">pin_drop</span>
+<span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Location</span>
+</div>
+<span class="font-headline-sm text-sm sm:text-base text-secondary font-bold">Dhaleshwar</span>
+<span class="text-[11px] text-on-surface-variant">Direct studio pickup</span>
+</div>
+</div>
+</div>
+<!-- Right Hero: Prominent Official Badge Plate with Floating Tech Chips -->
+<div class="lg:col-span-5 flex justify-center items-center relative">
+<!-- Outer circular calibration ring -->
+<div class="absolute w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] rounded-full border border-dashed border-emerald-500/25 animate-[spin_60s_linear_infinite] pointer-events-none"></div>
+<div class="absolute w-[380px] h-[380px] sm:w-[460px] sm:h-[460px] rounded-full border border-primary-container/15 pointer-events-none"></div>
+<!-- Glass Frame Holding Logo -->
+<div class="relative w-full max-w-[390px] aspect-square rounded-3xl glass-panel glass-panel-glow p-5 flex flex-col items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+<!-- Registration Corner Crosshairs -->
+<span class="absolute top-3 left-3 text-emerald-500/40 text-xs font-mono select-none">+ 01</span>
+<span class="absolute top-3 right-3 text-emerald-500/40 text-xs font-mono select-none">02 +</span>
+<span class="absolute bottom-3 left-3 text-emerald-500/40 text-xs font-mono select-none">+ 03</span>
+<span class="absolute bottom-3 right-3 text-emerald-500/40 text-xs font-mono select-none">04 +</span>
+<!-- Official Logo Image Container with Radiant Ring -->
+<div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2 bg-gradient-to-tr from-primary-container via-secondary-fixed to-cyan-400 shadow-[0_0_50px_rgba(230,0,103,0.45)] flex items-center justify-center group">
+<img id="logo-hero" alt="Pixel Graphics Official Signage" class="w-full h-full rounded-full object-cover shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]" src="assets/logo-hero.jpg"/>
+</div>
+<!-- Floating Pill 1: Offset & Digital -->
+<div class="absolute -top-4 -right-2 px-3 py-1.5 rounded-full bg-surface-container-high/95 backdrop-blur-md border border-secondary-fixed/40 text-secondary-fixed text-xs font-label-md font-semibold flex items-center gap-1.5 shadow-xl">
+<span class="material-symbols-outlined text-sm text-secondary-fixed">layers</span>
+<span>Offset &amp; Digital Print</span>
+</div>
+<!-- Floating Pill 2: Dhaleshwar Studio Hub -->
+<div class="absolute -bottom-4 px-4 py-2 rounded-full bg-surface-container-lowest/95 backdrop-blur-md border border-primary-container/50 text-secondary text-xs font-label-md font-bold flex items-center gap-2 shadow-[0_8px_20px_rgba(0,0,0,0.7)]">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span>Dhaleshwar • Deals In Complete Solutions</span>
+</div>
+<!-- Floating Pill 3: CMYK Color Calibrated -->
+<div class="absolute -bottom-3 -left-3 px-3 py-1 rounded-full bg-surface-container-high/95 backdrop-blur-md border border-cyan-400/40 text-cyan-300 text-[11px] font-label-sm font-semibold flex items-center gap-1.5 shadow-lg">
+<span class="material-symbols-outlined text-xs">tune</span>
+<span>CMYK Precision Calibrated</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== PRODUCTION SPECS TICKER ==================== -->
+<div class="w-full bg-surface-container-lowest border-y border-emerald-900/40 py-3" id="spec-ticker">
+<div class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4 font-label-sm text-xs tracking-wider uppercase text-on-surface-variant">
+<div class="flex items-center gap-2 text-cyan-300 font-semibold">
+<span class="material-symbols-outlined text-sm">ad_units</span>
+<span>1440 DPI Solvent &amp; Eco-Solvent Flex</span>
+</div>
+<div class="flex items-center gap-2 text-primary font-semibold">
+<span class="material-symbols-outlined text-sm">palette</span>
+<span>Pantone Spot Foil &amp; Velvet Matte Lam</span>
+</div>
+<div class="flex items-center gap-2 text-secondary-fixed font-semibold">
+<span class="material-symbols-outlined text-sm">local_shipping</span>
+<span>Direct Agartala &amp; Tripura Dispatch</span>
+</div>
+<div class="flex items-center gap-2 text-emerald-300 font-semibold">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>Wholesale Bulk Institutional Rates</span>
+</div>
+</div>
+</div>
+<!-- ==================== SERVICES GRID ==================== -->
+<section class="w-full px-4 sm:px-6 lg:px-8 py-20 max-w-[1360px] mx-auto flex flex-col gap-12" id="services">
+<!-- Section Header with Registration cross mark -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-emerald-900/40 pb-6">
+<div class="flex flex-col gap-2">
+<div class="inline-flex items-center gap-2 text-xs font-label-md uppercase tracking-widest text-primary font-bold">
+<span class="material-symbols-outlined text-base">center_focus_strong</span>
+<span>Comprehensive Workshop Catalog</span>
+</div>
+<h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-secondary">
+            Commercial Services &amp; Specialized Deals
+          </h2>
+<p class="font-body-md text-on-surface-variant max-w-2xl text-sm sm:text-base">
+            Derived directly from Pixel Graphics' certified press equipment in Dhaleshwar. Precision cutting, premium substrates, and vivid spot finishes.
+          </p>
+</div>
+<!-- Quick Spec Card Download / WhatsApp rate list -->
+<a class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass-panel hover:bg-surface-container-highest text-secondary border border-emerald-700/40 font-label-md text-xs tracking-wider uppercase font-semibold transition-all self-start md:self-auto shadow-sm" href="https://wa.me/917005569637?text=Hello%20Pixel%20Graphics,%20please%20send%20me%20your%20complete%20service%20rate%20card." rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base text-secondary-fixed">download</span>
+<span>Request Full Price Spec Card</span>
+</a>
+</div>
+<!-- Bento-style Grid (10 Core Services) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- 1. Flex Print & Banners -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-primary/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-surface-container text-cyan-300 border border-cyan-400/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">ad_units</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-cyan-300 border border-cyan-500/20 font-semibold">Outdoor Heavy</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-primary transition-colors">Flex Print &amp; Banners</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">High-tensile outdoor frontlit &amp; backlit hoardings, star flex, street banners, and shopfront fascia with heavy gauge eyelets.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">260–340 GSM</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Solvent / Eco-Solvent</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Reinforced Eyelets</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Flex%20Print%20%26%20Banners" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 2. Visiting Cards & Letterheads -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-secondary-fixed/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary-container/20 to-surface-container text-secondary-fixed border border-secondary-fixed/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">badge</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-secondary-fixed border border-secondary-fixed/20 font-semibold">Executive Grade</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-secondary-fixed transition-colors">Visiting Cards &amp; Letterheads</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">Premium corporate identity business cards, velvet soft-touch feel, hot gold/silver foil accenting, and high-bond official stationery.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">350–400 GSM Art</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Velvet / Matte / UV Spot</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Foil Stamping</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Visiting%20Cards%20%26%20Letterheads" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 3. ID-Cards & PVC Cards -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-tertiary/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-tertiary-container/20 to-surface-container text-tertiary border border-tertiary/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">credit_card</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-tertiary border border-tertiary/20 font-semibold">Thermal Sealed</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-tertiary transition-colors">ID-Cards &amp; PVC Cards</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">Waterproof collegiate and employee identity smart PVC cards with customized satin neck lanyards and badge holders.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">760 Micron Solid PVC</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Barcode &amp; QR Fused</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Satin Lanyard</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20ID%20Cards%20and%20PVC%20Badges" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 4. Envelopes, Pamphlets & Posters -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-pink-400/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-surface-container text-pink-400 border border-pink-500/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">mail</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-pink-400 border border-pink-500/20 font-semibold">Bulk Marketing</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-pink-400 transition-colors">Envelopes, Pamphlets &amp; Posters</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">High-volume marketing flyers, bi-fold &amp; tri-fold brochures, custom windowed business mailing envelopes, and promotional posters.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">130–170 GSM Gloss</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Machine Creased</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Full Color Bleed</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Envelopes,%20Pamphlets%20and%20Posters" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 5. Mementos, Badges & Tags -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-yellow-400/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-surface-container text-yellow-300 border border-yellow-400/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">military_tech</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-yellow-300 border border-yellow-400/20 font-semibold">Trophies &amp; Awards</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-yellow-300 transition-colors">Mementos, Badges &amp; Tags</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">Laser-cut clear acrylic shields, mahogany wooden trophies, die-cut metallic lapel pins, event VIP passes, and garment swing tags.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Laser Engraved Wood</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Brass Plate Foil</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Metal Butterfly Clasp</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Mementos,%20Badges%20and%20Tags" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 6. Bill Books & Book Printing -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-emerald-400/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-surface-container text-emerald-300 border border-emerald-400/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">menu_book</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-emerald-300 border border-emerald-400/20 font-semibold">Accounting Stationery</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-emerald-300 transition-colors">Bill Books &amp; Book Printing</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">NCR duplicate and triplicate carbonless invoice pads, order registers with auto numbering, and bound softcover booklets.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">NCR Carbonless Paper</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Consecutive Serial No.</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Perforated Edge</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Bill%20Books%20and%20Book%20Printing" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 7. Certificates & Diaries -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-cyan-400/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-surface-container text-cyan-300 border border-cyan-400/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">workspace_premium</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-cyan-300 border border-cyan-400/20 font-semibold">Institutional Diplomas</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-cyan-300 transition-colors">Certificates &amp; Diaries</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">Heavy textured parchment academic degrees, gold foil seal certificates, and customized executive daily leatherette planners.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">250–300 GSM Parchment</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Embossed Foil Seal</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Hardbound Finish</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Certificates%20and%20Corporate%20Diaries" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 8. Vinyl Print & One-Way Vision -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-primary/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-container/20 to-surface-container text-primary border border-primary/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">branding_watermark</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-primary border border-primary/20 font-semibold">Glass &amp; Vehicle Wrap</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-primary transition-colors">Vinyl Print &amp; One-Way Vision</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">Perforated storefront privacy films, commercial vehicle wraps, frosted glass partition films, and die-cut contour logo stickers.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Cast Vinyl Laminated</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">60/40 One-Way Vision</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">UV Weather Guard</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Vinyl%20Print%20and%20One-Way%20Vision" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 9. Custom T-Shirt & Fabric Print -->
+<div class="glass-panel glass-panel-glow p-6 rounded-2xl flex flex-col justify-between gap-5 group hover:border-tertiary/40 transition-all shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-tertiary-container/20 to-surface-container text-tertiary border border-tertiary/30 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">checkroom</span>
+</div>
+<span class="font-label-sm text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-surface-container-lowest text-tertiary border border-tertiary/20 font-semibold">DTF &amp; Screen Tech</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-xl text-secondary font-bold group-hover:text-tertiary transition-colors">Custom T-Shirt &amp; Fabric Print</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mt-1">High-definition Direct-to-Film (DTF) transfer prints, rubber screen print for corporate polo collars, event tees, and sports jerseys.</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">180–220 GSM Cotton</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Full Spectrum DTF</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-emerald-800/30">Wash Tested 50+</span>
+</div>
+</div>
+<a class="w-full py-2.5 px-4 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white font-label-md text-xs tracking-wider uppercase font-semibold text-center transition-all flex items-center justify-center gap-2 border border-emerald-700/30" href="https://wa.me/917005569637?text=Inquiry:%20Custom%20T-Shirts%20and%20Fabric%20Printing" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Inquire on WhatsApp</span>
+</a>
+</div>
+<!-- 10. Mug, Cup Printing, Custom Pens & Gifts (Span 3 Columns) -->
+<div class="glass-panel glass-panel-glow p-6 sm:p-8 rounded-2xl md:col-span-2 lg:col-span-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl border border-secondary-fixed/20">
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary-container/20 to-primary-container/20 text-secondary-fixed border border-secondary-fixed/40 flex items-center justify-center flex-shrink-0 shadow-lg">
+<span class="material-symbols-outlined text-3xl">coffee</span>
+</div>
+<div class="space-y-2">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-xl sm:text-2xl text-secondary font-bold">Mug &amp; Cup Printing, Custom Pens &amp; Corporate Gifts</h3>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed/15 text-secondary-fixed font-label-sm text-[11px] uppercase tracking-wider font-bold border border-secondary-fixed/30">All-in-One Swag Kits</span>
+</div>
+<p class="font-body-sm text-on-surface-variant text-sm max-w-3xl">
+                Thermal sublimation ceramic mugs, magic thermal color reveal mugs, metallic laser-engraved pens, promotional rubber keychains, and full welcome kits.
+              </p>
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-sm text-xs border border-emerald-800/30">Dishwasher Safe Ceramic</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-sm text-xs border border-emerald-800/30">Fine Laser Pen Engraving</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-sm text-xs border border-emerald-800/30">Low Minimum Order Quantity</span>
+</div>
+</div>
+</div>
+<a class="flex-shrink-0 w-full md:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-secondary-container to-amber-400 hover:brightness-105 text-on-secondary-container font-label-md text-xs tracking-wider uppercase font-bold text-center transition-all flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(253,220,0,0.3)]" href="https://wa.me/917005569637?text=Inquiry:%20Mug%20and%20Gift%20Item%20Printing" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Order Custom Merchandise</span>
+</a>
+</div>
+</div>
+</section>
+<!-- ==================== "OUR WORKS" PORTFOLIO ==================== -->
+<section class="w-full bg-[#031911]/90 border-y border-emerald-900/40 py-20" id="our-works-section">
+<div class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-10">
+<!-- Header & Category Switchers -->
+<div class="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6">
+<div class="flex flex-col gap-2">
+<div class="inline-flex items-center gap-2 text-xs font-label-md uppercase tracking-widest text-secondary-fixed font-bold">
+<span class="material-symbols-outlined text-base">photo_library</span>
+<span>Live Completed Press Runs</span>
+</div>
+<h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-secondary">
+              Our Works &amp; Production Portfolio
+            </h2>
+<p class="font-body-md text-on-surface-variant max-w-2xl text-sm sm:text-base">
+              Tangible proofs of craftsmanship delivered across Agartala. Clean high-resolution previews highlighting substrate quality and color fidelity.
+            </p>
+</div>
+<!-- Quick Interactive Category Filter Buttons -->
+<div class="flex flex-wrap items-center gap-2 bg-surface-container-high/60 p-1.5 rounded-xl border border-emerald-800/40" id="portfolio-tabs">
+<button class="portfolio-filter-btn px-4 py-2 rounded-lg bg-primary-container text-white font-label-md text-xs tracking-wider uppercase font-bold shadow-sm transition-all" data-filter="all">All Works</button>
+<button class="portfolio-filter-btn px-4 py-2 rounded-lg text-on-surface-variant hover:text-white font-label-md text-xs tracking-wider uppercase font-medium transition-all" data-filter="banners">Banners &amp; Flex</button>
+<button class="portfolio-filter-btn px-4 py-2 rounded-lg text-on-surface-variant hover:text-white font-label-md text-xs tracking-wider uppercase font-medium transition-all" data-filter="cards">Cards &amp; Stationery</button>
+<button class="portfolio-filter-btn px-4 py-2 rounded-lg text-on-surface-variant hover:text-white font-label-md text-xs tracking-wider uppercase font-medium transition-all" data-filter="merch">Custom Merch</button>
+<button class="portfolio-filter-btn px-4 py-2 rounded-lg text-on-surface-variant hover:text-white font-label-md text-xs tracking-wider uppercase font-medium transition-all" data-filter="vinyl">Vinyl &amp; Fleet</button>
+</div>
+</div>
+<!-- Portfolio Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolio-cards-grid">
+<!-- Populated dynamically from /api/portfolio by the script near the end of this page. -->
+</div>
+<p id="portfolio-empty-state" class="text-on-surface-variant text-sm text-center py-10" hidden>No completed work has been published yet — check back soon, or ask us directly on WhatsApp.</p>
+<!-- Custom Artwork Upload Prompt Box -->
+<div class="glass-panel p-6 sm:p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 border border-emerald-700/40 shadow-xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed/20 text-secondary-fixed border border-secondary-fixed/30 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-2xl">cloud_upload</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-lg text-secondary font-bold">Have your own artwork or print-ready file?</h4>
+<p class="font-body-sm text-on-surface-variant text-xs sm:text-sm">Send your PDF, CDR, AI, PSD, or Canva high-res files directly to our press operators on WhatsApp.</p>
+</div>
+</div>
+<a class="flex-shrink-0 px-6 py-3 rounded-xl bg-gradient-to-r from-secondary-container to-amber-400 hover:brightness-105 text-on-secondary-container font-label-md text-xs tracking-wider uppercase font-bold transition-all shadow-md flex items-center gap-2" href="https://wa.me/917005569637?text=Hello%20Pixel%20Graphics,%20I%20have%20an%20artwork%20ready%20for%20press%20review." rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Send Artwork via WhatsApp</span>
+</a>
+</div>
+</div>
+</section>
+<!-- ==================== DEDICATED CONTACT & PROOF DESK ==================== -->
+<section class="w-full px-4 sm:px-6 lg:px-8 py-20 max-w-[1360px] mx-auto flex flex-col gap-12" id="contact">
+<!-- Section Header -->
+<div class="flex flex-col gap-2 max-w-3xl">
+<div class="inline-flex items-center gap-2 text-xs font-label-md uppercase tracking-widest text-primary font-bold">
+<span class="material-symbols-outlined text-base">contact_phone</span>
+<span>Fast Turnaround &amp; Proofing</span>
+</div>
+<h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-secondary">
+          Direct Contact &amp; Studio Inquiries
+        </h2>
+<p class="font-body-md text-on-surface-variant text-sm sm:text-base">
+          Reach Subroto Da &amp; the Pixel Graphics production team in Dhaleshwar. Send specs for quick estimate proofs or visit our print floor in person.
+        </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left 5 Cols: WhatsApp Quick Hub & Direct Phone -->
+<div class="lg:col-span-5 glass-panel glass-panel-glow p-6 sm:p-8 rounded-2xl flex flex-col gap-6 shadow-2xl border border-emerald-700/40">
+<!-- Desk Status Header -->
+<div class="flex items-center justify-between border-b border-emerald-900/50 pb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl overflow-hidden p-0.5 bg-gradient-to-tr from-primary-container to-secondary-fixed flex-shrink-0 shadow-md">
+<img id="logo-contact" alt="Pixel Graphics Badge" class="w-full h-full object-cover rounded-[10px]" src="assets/logo-badge.jpg"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-base font-bold text-secondary">WhatsApp Direct Desk</span>
+<span class="font-label-sm text-xs text-secondary-fixed flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  Online • Ready for Proofs
+                </span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded bg-surface-container text-cyan-300 font-label-sm text-[11px] uppercase tracking-wider font-semibold border border-cyan-500/20">Instant</span>
+</div>
+<!-- Phone Number Highlight -->
+<div class="space-y-1">
+<span class="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider">Direct Hotline &amp; WhatsApp:</span>
+<div class="flex items-center gap-2 font-headline-md text-2xl sm:text-3xl text-secondary font-bold select-all">
+<span class="material-symbols-outlined text-emerald-400 text-3xl">call</span>
+<span data-field="whatsapp-local">7005569637</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">Send screenshots, measurements, and artwork for instant price estimation.</p>
+</div>
+<!-- Graphic QR Code Plate -->
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-emerald-800/40 flex items-center gap-4 shadow-inner">
+<div class="w-20 h-20 rounded-lg bg-emerald-950 p-2 border border-emerald-700/40 flex items-center justify-center flex-shrink-0">
+<!-- Inline Crisp Vector QR Representation -->
+<svg class="w-full h-full text-secondary-fixed" fill="currentColor" viewbox="0 0 100 100">
+<rect height="28" rx="3" width="28" x="2" y="2"></rect>
+<rect fill="#02110c" height="18" width="18" x="7" y="7"></rect>
+<rect height="8" rx="1" width="8" x="12" y="12"></rect>
+<rect height="28" rx="3" width="28" x="70" y="2"></rect>
+<rect fill="#02110c" height="18" width="18" x="75" y="7"></rect>
+<rect height="8" rx="1" width="8" x="80" y="12"></rect>
+<rect height="28" rx="3" width="28" x="2" y="70"></rect>
+<rect fill="#02110c" height="18" width="18" x="7" y="75"></rect>
+<rect height="8" rx="1" width="8" x="12" y="80"></rect>
+<rect height="18" rx="2" width="10" x="42" y="12"></rect>
+<rect height="24" rx="2" width="24" x="38" y="38"></rect>
+<rect height="12" rx="2" width="18" x="70" y="44"></rect>
+<rect height="14" rx="2" width="18" x="12" y="44"></rect>
+<rect height="22" rx="2" width="10" x="72" y="70"></rect>
+<rect height="12" rx="2" width="12" x="44" y="76"></rect>
+</svg>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-xs font-bold uppercase tracking-wider text-secondary-fixed">Scan To Chat</span>
+<p class="font-body-sm text-xs text-on-surface-variant">Point your mobile camera to launch direct conversation with Pixel Graphics.</p>
+</div>
+</div>
+<!-- Instant WhatsApp CTA -->
+<a class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-label-md text-xs tracking-wider uppercase font-bold text-center shadow-[0_4px_20px_rgba(16,185,129,0.35)] transition-all flex items-center justify-center gap-2" href="https://wa.me/917005569637?text=Hello%20Pixel%20Graphics,%20I%20want%20to%20inquire%20about%20printing%20services" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-lg">chat</span>
+<span>Open WhatsApp (<span data-field="whatsapp-intl">+91 7005569637</span>)</span>
+</a>
+<!-- Studio Location Box inside Pillar -->
+<div class="pt-4 border-t border-emerald-900/50 flex items-start gap-3 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-xl flex-shrink-0">location_on</span>
+<div class="space-y-0.5">
+<span class="text-secondary font-bold block">Dhaleshwar Production Press</span>
+<span><span data-field="address">Dhaleshwar, Agartala, Tripura 799007</span>. Press checks welcome by appointment.</span>
+</div>
+</div>
+</div>
+<!-- Right 7 Cols: Official Gmail Desk & Inquiry Form -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="glass-panel glass-panel-glow p-6 sm:p-8 rounded-2xl flex flex-col gap-6 shadow-2xl border border-emerald-700/40">
+<!-- Gmail Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-900/50 pb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 text-primary border border-primary/30 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-2xl">mark_email_read</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-base font-bold text-secondary">Official Gmail Desk</span>
+<span class="font-body-sm text-sm text-primary select-all font-mono font-semibold" data-field="email">graphicspixel18@gmail.com</span>
+</div>
+</div>
+<a class="px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-secondary border border-emerald-700/30 text-xs font-label-md uppercase tracking-wider font-semibold transition-all flex items-center gap-1.5 self-start sm:self-auto" href="mailto:graphicspixel18@gmail.com?subject=Print%20Inquiry%20-%20Pixel%20Graphics">
+<span class="material-symbols-outlined text-sm">mail</span>
+<span>Direct Email</span>
+</a>
+</div>
+<!-- Inquiry Form -->
+<form class="grid grid-cols-1 sm:grid-cols-2 gap-4" onsubmit="event.preventDefault(); const n = encodeURIComponent(document.getElementById('form-name').value); const p = encodeURIComponent(document.getElementById('form-phone').value); const s = encodeURIComponent(document.getElementById('form-service').value); const m = encodeURIComponent(document.getElementById('form-msg').value); window.location.href='mailto:'+(window.SITE_EMAIL || 'graphicspixel18@gmail.com')+'?subject=Inquiry:%20'+s+'&amp;body=Name:%20'+n+'%0APhone:%20'+p+'%0AService:%20'+s+'%0ASpecs:%20'+m;">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="form-name">Full Name / Organization</label>
+<input class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-emerald-800/50 text-secondary text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-neutral-600" id="form-name" placeholder="e.g. Subrata Dey / Apex Corp" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="form-phone">Phone / WhatsApp Number</label>
+<input class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-emerald-800/50 text-secondary text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-neutral-600" id="form-phone" placeholder="e.g. 70055XXXXX" required="" type="tel"/>
+</div>
+<div class="sm:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="form-service">Required Service</label>
+<select class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-emerald-800/50 text-secondary text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="form-service">
+<option value="Flex Print &amp; Banners">Flex Print &amp; Banners (Frontlit / Backlit / Star)</option>
+<option value="Visiting Cards &amp; Letterheads">Visiting Cards &amp; Letterheads (Matte / Velvet / UV / Foil)</option>
+<option value="ID-Cards &amp; PVC Badges">ID-Cards &amp; PVC Cards (Thermal Sealed + Lanyards)</option>
+<option value="Envelopes, Pamphlets &amp; Posters">Envelopes, Pamphlets &amp; Posters</option>
+<option value="Mementos, Badges &amp; Tags">Mementos, Badges &amp; Tags (Acrylic / Wood / Metal)</option>
+<option value="Bill Books &amp; Book Printing">Bill Books &amp; Book Printing (NCR Duplicate / Triplicate)</option>
+<option value="Certificates &amp; Diaries">Certificates &amp; Executive Diaries</option>
+<option value="Vinyl Print &amp; One-Way Vision">Vinyl Print &amp; One-Way Vision (Glass &amp; Vehicle)</option>
+<option value="Custom T-Shirt &amp; Fabric Print">Custom T-Shirt &amp; Fabric Print (DTF / Screen)</option>
+<option value="Mug &amp; Cup Printing / Corporate Gifts">Mug &amp; Cup Printing / Custom Pens / Gifts</option>
+</select>
+</div>
+<div class="sm:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="form-msg">Dimensions, Quantity &amp; Notes</label>
+<textarea class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-emerald-800/50 text-secondary text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-neutral-600" id="form-msg" placeholder="e.g. 500 pcs Velvet Cards + 1 Flex Banner (8x4 ft) for store opening next week." rows="3"></textarea>
+</div>
+<div class="sm:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+<div class="flex items-center gap-1.5 text-xs text-secondary-fixed">
+<span class="material-symbols-outlined text-base">verified</span>
+<span>Direct submission to <span data-field="email">graphicspixel18@gmail.com</span></span>
+</div>
+<button class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-primary-container to-[#bc0053] hover:brightness-110 text-white font-label-md text-xs tracking-wider uppercase font-bold shadow-lg transition-all" type="submit">
+                  Generate Email Inquiry
+                </button>
+</div>
+</form>
+</div>
+<!-- Dhaleshwar Quick Map / Landmark Card -->
+<div class="glass-panel p-5 rounded-2xl flex items-center justify-between gap-4 border border-emerald-800/40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-xl">map</span>
+</div>
+<div class="text-xs">
+<span class="text-secondary font-bold block">Need physical paper swatch or flex proof check?</span>
+<span class="text-on-surface-variant">Drop by our Dhaleshwar facility. Open Mon–Sat: 9:30 AM – 8:30 PM.</span>
+</div>
+</div>
+<a id="directions-link" class="px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-cyan-300 text-xs font-label-md uppercase tracking-wider font-semibold transition-all flex items-center gap-1 flex-shrink-0 border border-cyan-500/20" href="https://maps.google.com/?q=Dhaleshwar+Agartala+Tripura" rel="noopener" target="_blank">
+<span>Directions</span>
+<span class="material-symbols-outlined text-sm">north_east</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== PRODUCTION GUARANTEE STRIP ==================== -->
+<section class="w-full bg-[#010c08] border-t border-emerald-900/40 py-12">
+<div class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+<div class="flex flex-col items-center gap-1 p-4 rounded-xl glass-panel">
+<span class="font-headline-lg text-3xl font-extrabold text-primary">100%</span>
+<span class="font-headline-sm text-sm font-bold text-secondary">Color Calibration</span>
+<span class="text-xs text-on-surface-variant">Spot CMYK fidelity tested</span>
+</div>
+<div class="flex flex-col items-center gap-1 p-4 rounded-xl glass-panel">
+<span class="font-headline-lg text-3xl font-extrabold text-secondary-fixed">Same-Day</span>
+<span class="font-headline-sm text-sm font-bold text-secondary">Flex Production</span>
+<span class="text-xs text-on-surface-variant">Available on standard runs</span>
+</div>
+<div class="flex flex-col items-center gap-1 p-4 rounded-xl glass-panel">
+<span class="font-headline-lg text-3xl font-extrabold text-cyan-300">10+</span>
+<span class="font-headline-sm text-sm font-bold text-secondary">Workshop Solutions</span>
+<span class="text-xs text-on-surface-variant">Visiting cards to hoardings</span>
+</div>
+<div class="flex flex-col items-center gap-1 p-4 rounded-xl glass-panel">
+<span class="font-headline-lg text-3xl font-extrabold text-emerald-400">Dhaleshwar</span>
+<span class="font-headline-sm text-sm font-bold text-secondary">Local Production Hub</span>
+<span class="text-xs text-on-surface-variant">Direct studio assistance</span>
+</div>
+</div>
+</section>
+</main>
+<!-- ==================== FOOTER ==================== -->
+<footer class="w-full bg-[#010906] border-t border-emerald-900/60 py-12 text-on-surface-variant">
+<div class="w-full px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto flex flex-col gap-8">
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<!-- Brand recap -->
+<div class="flex items-center gap-3">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-primary-container to-secondary-fixed shadow-md">
+<img id="logo-footer" alt="Pixel Graphics Logo" class="w-10 h-10 rounded-full object-cover" src="assets/logo-footer.jpg"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-lg font-bold text-secondary">Pixel Graphics</span>
+<span class="font-label-sm text-xs text-tertiary uppercase tracking-wider">Design &amp; Print Solution • Dhaleshwar</span>
+</div>
+</div>
+<!-- Footer quick links -->
+<div class="flex flex-wrap items-center gap-6 font-label-md text-xs uppercase tracking-wider">
+<a class="hover:text-secondary transition-colors" href="#services">Services</a>
+<a class="hover:text-secondary transition-colors" href="#our-works-section">Our Works</a>
+<a class="hover:text-secondary transition-colors" href="#contact">Contact</a>
+<a class="hover:text-secondary transition-colors" href="docs/prd.md.html">Documentation</a>
+<a class="hover:text-secondary transition-colors" href="admin.html">Studio Login</a>
+<a class="text-secondary-fixed hover:text-white transition-colors" href="https://wa.me/917005569637" rel="noopener" target="_blank">WhatsApp (<span data-field="whatsapp-local">7005569637</span>)</a>
+<a class="text-primary hover:text-white transition-colors" href="mailto:graphicspixel18@gmail.com" data-field="email">graphicspixel18@gmail.com</a>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-emerald-950 text-xs font-body-sm">
+<p>© 2024 Pixel Graphics - Design &amp; Print Solution. Dhaleshwar, Agartala. All rights reserved.</p>
+<!-- CMYK Calibration Micro Strip in Footer -->
+<div class="flex items-center gap-3">
+<span class="text-neutral-500">Press Calibrated:</span>
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 bg-cyan-400 rounded-sm" title="Cyan"></span>
+<span class="w-2.5 h-2.5 bg-pink-500 rounded-sm" title="Magenta"></span>
+<span class="w-2.5 h-2.5 bg-yellow-400 rounded-sm" title="Yellow"></span>
+<span class="w-2.5 h-2.5 bg-black rounded-sm border border-neutral-700" title="Key/Black"></span>
+</div>
+<span class="text-neutral-400">1440/2400 DPI</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- PORTFOLIO: fetched from the admin-managed backend and rendered client-side -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.portfolio-filter-btn');
+      const grid = document.getElementById('portfolio-cards-grid');
+      const emptyState = document.getElementById('portfolio-empty-state');
+      const CATEGORY_LABELS = { banners: 'Banners & Flex', cards: 'Cards & Stationery', merch: 'Custom Merch', vinyl: 'Vinyl & Fleet', other: 'Studio Work' };
+
+      let items = [];
+      let activeFilter = 'all';
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str == null ? '' : str;
+        return div.innerHTML;
+      }
+
+      function renderCard(item) {
+        const preview = (item.isImage || item.mimeType === 'image/svg+xml')
+          ? `<img alt="${escapeHtml(item.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="${item.fileUrl}"/>`
+          : `<div class="w-full h-full flex items-center justify-center bg-surface-container-high"><span class="material-symbols-outlined text-5xl text-tertiary">draft</span></div>`;
+
+        return `
+          <div class="portfolio-card glass-panel rounded-2xl overflow-hidden shadow-xl flex flex-col group border border-emerald-800/40 hover:border-primary/50 transition-all" data-category="${item.category}">
+            <div class="relative w-full h-64 overflow-hidden bg-black/40">${preview}</div>
+            <div class="p-5 flex flex-col gap-2 flex-grow justify-between">
+              <div class="space-y-1">
+                <span class="font-label-sm text-xs text-emerald-300 font-bold uppercase tracking-wider">${CATEGORY_LABELS[item.category] || 'Studio Work'}</span>
+                <h4 class="font-headline-sm text-lg text-secondary font-bold">${escapeHtml(item.title)}</h4>
+                ${item.description ? `<p class="font-body-sm text-on-surface-variant text-xs leading-relaxed">${escapeHtml(item.description)}</p>` : ''}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function renderGrid() {
+        const visible = activeFilter === 'all' ? items : items.filter((i) => i.category === activeFilter);
+        grid.innerHTML = visible.map(renderCard).join('');
+        emptyState.hidden = items.length > 0;
+      }
+
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeFilter = btn.getAttribute('data-filter');
+
+          filterButtons.forEach(b => {
+            b.classList.remove('bg-primary-container', 'text-white', 'font-bold');
+            b.classList.add('text-on-surface-variant', 'font-medium');
+          });
+          btn.classList.add('bg-primary-container', 'text-white', 'font-bold');
+          btn.classList.remove('text-on-surface-variant', 'font-medium');
+
+          renderGrid();
+        });
+      });
+
+      fetch('/api/portfolio', { credentials: 'same-origin' })
+        .then((res) => (res.ok ? res.json() : { items: [] }))
+        .then((data) => {
+          items = data.items || [];
+          renderGrid();
+        })
+        .catch(() => {
+          // Site opened without the backend running (e.g. a static file:// preview) — show the empty state.
+          emptyState.hidden = false;
+        });
+
+      applySiteSettings();
+    });
+
+    // With the icon webfont active, "print" renders as a single square glyph
+    // (~1em wide); without it the literal word renders several times wider.
+    // Measuring is reliable where document.fonts.check() is not — check()
+    // reports true for a family that was never declared at all.
+    function hideIconsIfFontMissing() {
+      const probe = document.createElement('span');
+      probe.className = 'material-symbols-outlined';
+      probe.textContent = 'print';
+      probe.style.cssText = 'position:absolute;visibility:hidden;font-size:24px;';
+      document.body.appendChild(probe);
+      const width = probe.getBoundingClientRect().width;
+      probe.remove();
+      if (width > 40) document.documentElement.classList.add('no-icon-font');
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(hideIconsIfFontMissing);
+    } else {
+      window.addEventListener('load', hideIconsIfFontMissing);
+    }
+
+    // --- Site identity: logo, WhatsApp number, email, address ----------------
+    // Falls back silently to the values already baked into the markup above
+    // when the backend isn't running (e.g. a static file:// preview).
+    function applySiteSettings() {
+      const DEFAULT_WA = '917005569637';
+      const DEFAULT_EMAIL = 'graphicspixel18@gmail.com';
+
+      fetch('/api/settings', { credentials: 'same-origin' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((settings) => {
+          if (!settings) return;
+
+          const wa = (settings.whatsappNumber || DEFAULT_WA).replace(/\D/g, '');
+          const email = settings.email || DEFAULT_EMAIL;
+          const address = settings.address || '';
+          const waLocal = wa.startsWith('91') && wa.length === 12 ? wa.slice(2) : wa;
+          const waIntl = wa.startsWith('91') ? `+91 ${waLocal}` : `+${wa}`;
+
+          window.SITE_EMAIL = email;
+
+          if (settings.logoUrl) {
+            ['logo-header', 'logo-hero', 'logo-contact', 'logo-footer'].forEach((id) => {
+              const el = document.getElementById(id);
+              if (el) el.src = settings.logoUrl;
+            });
+          }
+
+          document.querySelectorAll('[data-field="whatsapp-local"]').forEach((el) => { el.textContent = waLocal; });
+          document.querySelectorAll('[data-field="whatsapp-intl"]').forEach((el) => { el.textContent = waIntl; });
+          document.querySelectorAll('[data-field="email"]').forEach((el) => { el.textContent = email; });
+          if (address) {
+            document.querySelectorAll('[data-field="address"]').forEach((el) => { el.textContent = address; });
+          }
+
+          document.querySelectorAll(`a[href^="https://wa.me/${DEFAULT_WA}"]`).forEach((a) => {
+            a.href = a.href.replace(DEFAULT_WA, wa);
+          });
+          document.querySelectorAll(`a[href^="mailto:${DEFAULT_EMAIL}"]`).forEach((a) => {
+            a.href = a.href.replace(DEFAULT_EMAIL, email);
+          });
+
+          const directions = document.getElementById('directions-link');
+          if (directions && address) {
+            directions.href = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+          }
+        })
+        .catch(() => { /* backend not running — keep the static defaults already in the markup */ });
+    }
+  </script>
+</body></html>

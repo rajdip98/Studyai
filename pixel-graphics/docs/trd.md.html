@@ -1,0 +1,239 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TRD — Pixel Graphics</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&family=Outfit:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;background:#00170f;color:#cbe9db;font-family:'Hanken Grotesk',Arial,sans-serif}a{color:#ffb1c1;text-decoration:none}.top{height:4px;background:linear-gradient(90deg,#22d3ee,#e60067,#fddc00,#111)}header{position:sticky;top:0;z-index:10;background:rgba(2,20,14,.92);backdrop-filter:blur(18px);border-bottom:1px solid #203a30}.nav{max-width:1180px;margin:auto;padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between}.brand{font-family:Outfit;font-weight:800;font-size:22px;color:#fff9ed}.links{display:flex;gap:8px;flex-wrap:wrap}.links a{padding:8px 12px;border:1px solid #203a30;border-radius:10px;color:#cbe9db;font:600 12px 'Space Grotesk'}.links a.active{background:#e60067;color:white}.wrap{max-width:1180px;margin:auto;padding:44px 22px 80px}.hero{border:1px solid #203a30;border-radius:20px;padding:28px;background:linear-gradient(145deg,#09241b,#052017);box-shadow:0 18px 50px rgba(0,0,0,.35)}h1,h2,h3{font-family:Outfit;color:#fff9ed}h1{font-size:48px;margin:0 0 10px}h2{margin-top:34px;font-size:28px;border-bottom:1px solid #203a30;padding-bottom:8px}h3{font-size:20px}p,li{font-size:15px;line-height:1.7}code,pre{font-family:'Space Grotesk',monospace}pre{background:#00120b;border:1px solid #203a30;border-radius:12px;padding:16px;overflow:auto;color:#ffe24a}.meta{font:600 11px 'Space Grotesk';text-transform:uppercase;letter-spacing:.08em;color:#ffb691}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}.card{padding:16px;border:1px solid #203a30;border-radius:14px;background:#09241b}.card strong{display:block;color:#fff9ed;margin-bottom:5px}@media(max-width:800px){h1{font-size:36px}.grid{grid-template-columns:1fr 1fr}.links{display:none}}@media(max-width:520px){.grid{grid-template-columns:1fr}.wrap{padding:24px 14px 60px}}</style></head><body><div class="top"></div><header><div class="nav"><div class="brand">Pixel Graphics · Docs</div><nav class="links"><a href="../index.html">← Site</a><a class="" href="prd.md.html">PRD</a><a class="active" href="trd.md.html">TRD</a><a class="" href="security.md.html">SECURITY</a><a class="" href="agent.md.html">AGENT</a></nav></div></header><main class="wrap"><section class="hero"><div class="meta">Pixel Graphics Studio · Documentation</div><h1>Technical Requirements Document (TRD)</h1>
+<h2>Pixel Graphics — Design &amp; Print Solution</h2>
+<p><strong>Document status:</strong> Draft v1.0  </p>
+<p><strong>Reference UI:</strong> Uploaded Pixel Graphics HTML + DESIGN.md</p>
+<h2>1. Technical direction</h2>
+<p>The reference implementation is a responsive, single-page marketing interface using HTML, Tailwind-style utility classes, Material Symbols, and Google-hosted fonts. The production implementation should preserve the visual language while moving business-critical data and integrations into maintainable application components.</p>
+<h2>2. Recommended architecture</h2>
+<h3>Frontend</h3>
+<ul>
+<li>Semantic HTML5.</li>
+<li>Tailwind CSS or an equivalent utility/component system.</li>
+<li>Component-based framework such as Next.js/React if the site is expected to grow.</li>
+<li>Responsive breakpoints for mobile, tablet, and desktop.</li>
+<li>Client-side form validation with server-side validation as the source of truth.</li>
+</ul>
+<h3>Backend</h3>
+<p>A lightweight API/service layer should handle:</p>
+<ul>
+<li>inquiry submission</li>
+<li>email notification</li>
+<li>spam protection</li>
+<li>optional file upload</li>
+<li>analytics/event ingestion</li>
+<li>future quote/order records</li>
+</ul>
+<h3>Storage</h3>
+<p>No customer data should be persisted unless required. If persistence is introduced:</p>
+<ul>
+<li>PostgreSQL or another managed relational database.</li>
+<li>Object storage for artwork/proofs.</li>
+<li>Separate metadata and binary-file storage.</li>
+</ul>
+<h2>3. Core routes/pages</h2>
+<ul>
+<li>`/` — main marketing page.</li>
+<li>`/services` — service catalogue.</li>
+<li>`/portfolio` — production portfolio.</li>
+<li>`/contact` — inquiry and contact information.</li>
+<li>`/docs/prd` — product requirements.</li>
+<li>`/docs/trd` — technical requirements.</li>
+<li>`/docs/security` — security requirements.</li>
+<li>`/docs/agent` — AI/automation agent instructions.</li>
+</ul>
+<p>For the requested documentation UI, PRD, TRD, Security, and Agent are separate pages and should share the same design shell.</p>
+<h2>4. Components</h2>
+<h3>Global</h3>
+<ul>
+<li>Header</li>
+<li>Navigation</li>
+<li>Mobile navigation</li>
+<li>CTA buttons</li>
+<li>Footer</li>
+<li>Toast/alert</li>
+<li>Modal/lightbox</li>
+<li>Documentation sidebar</li>
+</ul>
+<h3>Business</h3>
+<ul>
+<li>ServiceCard</li>
+<li>SpecChip</li>
+<li>PortfolioCard</li>
+<li>ContactCard</li>
+<li>InquiryForm</li>
+<li>QuoteCTA</li>
+<li>ProductionStatus</li>
+<li>ProofViewer (future)</li>
+<li>FileUploader (future)</li>
+</ul>
+<h2>5. Data models</h2>
+<h3>Inquiry</h3>
+<pre>
+id
+created_at
+name
+organization
+phone
+email
+service
+dimensions
+quantity
+notes
+source
+status
+</pre>
+<h3>PortfolioItem</h3>
+<pre>
+id
+title
+category
+description
+material
+process
+dimensions
+quantity
+image_url
+published
+</pre>
+<h3>Service</h3>
+<pre>
+id
+name
+slug
+description
+materials[]
+finishes[]
+specifications[]
+cta_label
+active
+</pre>
+<h2>6. API requirements</h2>
+<h3>POST /api/inquiries</h3>
+<p>Accept a validated inquiry payload.</p>
+<p>Requirements:</p>
+<ul>
+<li>JSON request body.</li>
+<li>Content-Type validation.</li>
+<li>Server-side field validation.</li>
+<li>Rate limiting.</li>
+<li>Bot/spam detection.</li>
+<li>Structured error response.</li>
+<li>No sensitive data in logs.</li>
+</ul>
+<p>Example response:</p>
+<pre>
+{
+  &quot;success&quot;: true,
+  &quot;message&quot;: &quot;Inquiry received&quot;
+}
+</pre>
+<h3>Future POST /api/uploads</h3>
+<ul>
+<li>Signed upload URL.</li>
+<li>File type allowlist.</li>
+<li>File size limit.</li>
+<li>Malware scanning where supported.</li>
+<li>Short-lived access URLs.</li>
+</ul>
+<h2>7. External integrations</h2>
+<h3>WhatsApp</h3>
+<p>The public CTA may open a WhatsApp conversation. Do not expose private API credentials in frontend code.</p>
+<h3>Email</h3>
+<p>The public inquiry route should submit to a server-side mail provider or transactional email service. Never embed SMTP/API credentials in browser JavaScript.</p>
+<h3>Maps</h3>
+<p>Use a privacy-conscious map link or static location card where possible.</p>
+<h2>8. Performance</h2>
+<p>Targets:</p>
+<ul>
+<li>LCP ≤ 2.5s on a representative 4G mobile connection.</li>
+<li>CLS ≤ 0.1.</li>
+<li>INP ≤ 200ms where feasible.</li>
+<li>Compress portfolio images.</li>
+<li>Lazy-load below-the-fold images.</li>
+<li>Avoid unnecessary JavaScript for static sections.</li>
+<li>Self-host critical fonts if licensing/performance requirements justify it.</li>
+</ul>
+<h2>9. Accessibility</h2>
+<ul>
+<li>WCAG 2.2 AA target.</li>
+<li>Semantic headings in correct order.</li>
+<li>Keyboard navigability.</li>
+<li>Focus-visible states.</li>
+<li>Form labels and errors.</li>
+<li>Alt text for meaningful images.</li>
+<li>Decorative images marked appropriately.</li>
+<li>Do not encode essential information solely by color.</li>
+</ul>
+<h2>10. SEO</h2>
+<ul>
+<li>Unique title and description.</li>
+<li>Canonical URL.</li>
+<li>Open Graph metadata.</li>
+<li>Organization/local-business structured data where accurate.</li>
+<li>Descriptive service URLs.</li>
+<li>Sitemap and robots configuration.</li>
+<li>Noindex documentation pages if they are intended for internal use only.</li>
+</ul>
+<h2>11. Observability</h2>
+<p>Track:</p>
+<ul>
+<li>page views</li>
+<li>CTA clicks</li>
+<li>WhatsApp clicks</li>
+<li>mail clicks</li>
+<li>form starts</li>
+<li>form submissions</li>
+<li>validation failures</li>
+<li>upload failures</li>
+<li>API errors</li>
+</ul>
+<p>Logs must exclude message bodies, passwords, tokens, uploaded file contents, and unnecessary personal information.</p>
+<h2>12. Deployment</h2>
+<p>Recommended:</p>
+<ul>
+<li>Git-based source control.</li>
+<li>Preview deployments for pull requests.</li>
+<li>Production deployment behind HTTPS.</li>
+<li>Environment variables for all secrets.</li>
+<li>Automated build/test/lint checks.</li>
+<li>Backups for any persistent database.</li>
+</ul>
+<h2>13. Testing</h2>
+<h3>Unit</h3>
+<ul>
+<li>form validation</li>
+<li>service data rendering</li>
+<li>CTA generation</li>
+</ul>
+<h3>Integration</h3>
+<ul>
+<li>inquiry API</li>
+<li>email delivery</li>
+<li>spam/rate-limit controls</li>
+</ul>
+<h3>E2E</h3>
+<ul>
+<li>navigation</li>
+<li>mobile menu</li>
+<li>service inquiry</li>
+<li>contact form success/error</li>
+<li>external CTA behavior</li>
+</ul>
+<h3>Visual</h3>
+<ul>
+<li>desktop 1440px</li>
+<li>tablet 1024px</li>
+<li>mobile 390px</li>
+<li>dark theme consistency</li>
+<li>no horizontal overflow</li>
+</ul>
+<h2>14. Technical acceptance criteria</h2>
+<ul>
+<li>No secrets in client bundles.</li>
+<li>Core pages work without JavaScript where practical.</li>
+<li>API rejects malformed requests.</li>
+<li>Rate limits are enforced.</li>
+<li>Production assets are optimized.</li>
+<li>All external links use HTTPS.</li>
+<li>Error states are user-friendly and non-sensitive.</li>
+</ul></section></main></body></html>

@@ -1,0 +1,202 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PRD — Pixel Graphics</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&family=Outfit:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;background:#00170f;color:#cbe9db;font-family:'Hanken Grotesk',Arial,sans-serif}a{color:#ffb1c1;text-decoration:none}.top{height:4px;background:linear-gradient(90deg,#22d3ee,#e60067,#fddc00,#111)}header{position:sticky;top:0;z-index:10;background:rgba(2,20,14,.92);backdrop-filter:blur(18px);border-bottom:1px solid #203a30}.nav{max-width:1180px;margin:auto;padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between}.brand{font-family:Outfit;font-weight:800;font-size:22px;color:#fff9ed}.links{display:flex;gap:8px;flex-wrap:wrap}.links a{padding:8px 12px;border:1px solid #203a30;border-radius:10px;color:#cbe9db;font:600 12px 'Space Grotesk'}.links a.active{background:#e60067;color:white}.wrap{max-width:1180px;margin:auto;padding:44px 22px 80px}.hero{border:1px solid #203a30;border-radius:20px;padding:28px;background:linear-gradient(145deg,#09241b,#052017);box-shadow:0 18px 50px rgba(0,0,0,.35)}h1,h2,h3{font-family:Outfit;color:#fff9ed}h1{font-size:48px;margin:0 0 10px}h2{margin-top:34px;font-size:28px;border-bottom:1px solid #203a30;padding-bottom:8px}h3{font-size:20px}p,li{font-size:15px;line-height:1.7}code,pre{font-family:'Space Grotesk',monospace}pre{background:#00120b;border:1px solid #203a30;border-radius:12px;padding:16px;overflow:auto;color:#ffe24a}.meta{font:600 11px 'Space Grotesk';text-transform:uppercase;letter-spacing:.08em;color:#ffb691}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}.card{padding:16px;border:1px solid #203a30;border-radius:14px;background:#09241b}.card strong{display:block;color:#fff9ed;margin-bottom:5px}@media(max-width:800px){h1{font-size:36px}.grid{grid-template-columns:1fr 1fr}.links{display:none}}@media(max-width:520px){.grid{grid-template-columns:1fr}.wrap{padding:24px 14px 60px}}</style></head><body><div class="top"></div><header><div class="nav"><div class="brand">Pixel Graphics · Docs</div><nav class="links"><a href="../index.html">← Site</a><a class="active" href="prd.md.html">PRD</a><a class="" href="trd.md.html">TRD</a><a class="" href="security.md.html">SECURITY</a><a class="" href="agent.md.html">AGENT</a></nav></div></header><main class="wrap"><section class="hero"><div class="meta">Pixel Graphics Studio · Documentation</div><h1>Product Requirements Document (PRD)</h1>
+<h2>Pixel Graphics — Design &amp; Print Solution</h2>
+<p><strong>Document status:</strong> Draft v1.0  </p>
+<p><strong>Product:</strong> Pixel Graphics Studio website  </p>
+<p><strong>Primary business:</strong> Commercial design and print production  </p>
+<p><strong>Primary location:</strong> Dhaleshwar, Agartala, Tripura 799007</p>
+<h2>1. Product overview</h2>
+<p>Pixel Graphics is a conversion-focused studio website for a local commercial print business. The UI positions the studio as a fast, technically capable print-production partner while making it easy to request quotes, send artwork, review capabilities, and contact the production desk.</p>
+<p>The experience combines a dark print-shop aesthetic with CMYK-inspired accents, tactile cards, production specifications, portfolio proof, and direct WhatsApp/email actions.</p>
+<h2>2. Goals</h2>
+<ul>
+<li>Generate qualified quote and inquiry requests.</li>
+<li>Clearly communicate the breadth of print services.</li>
+<li>Build trust through technical specifications and production examples.</li>
+<li>Make WhatsApp and email the fastest paths to conversion.</li>
+<li>Showcase finished work and production quality.</li>
+<li>Support mobile users while preserving a dense, professional desktop experience.</li>
+<li>Establish a reusable visual system for future order/proof workflows.</li>
+</ul>
+<h2>3. Non-goals</h2>
+<ul>
+<li>Full ecommerce checkout in the current marketing site.</li>
+<li>Online payment processing.</li>
+<li>Automated production scheduling.</li>
+<li>Automated price calculation for every service.</li>
+<li>Customer account management unless introduced in a future phase.</li>
+</ul>
+<h2>4. Target users</h2>
+<h3>Local business owners</h3>
+<p>Need signage, stationery, cards, marketing material, and quick turnaround.</p>
+<h3>Event and institutional coordinators</h3>
+<p>Need banners, certificates, IDs, merchandise, awards, and event collateral.</p>
+<h3>Corporate marketing teams</h3>
+<p>Need repeatable branded stationery, fleet graphics, apparel, promotional products, and bulk print.</p>
+<h3>Creative/design professionals</h3>
+<p>Need production-ready output, material choices, proofs, and reliable print fidelity.</p>
+<h2>5. Primary user journeys</h2>
+<ol>
+<li>1. **Discover → service → inquiry**</li>
+</ul>
+<p>   - Land on hero.</p>
+<p>   - Scan service categories.</p>
+<p>   - Open a relevant service.</p>
+<p>   - Send WhatsApp inquiry or request a quote.</p>
+<ol>
+<li>2. **Portfolio → proof → inquiry**</li>
+</ul>
+<p>   - Review production portfolio.</p>
+<p>   - Inspect material/specification details.</p>
+<p>   - Contact studio with a similar requirement.</p>
+<ol>
+<li>3. **Specification-led buyer**</li>
+</ul>
+<p>   - Review DPI, GSM, substrate, finishing, and turnaround claims.</p>
+<p>   - Compare relevant services.</p>
+<p>   - Request a detailed quote.</p>
+<ol>
+<li>4. **Direct-contact buyer**</li>
+</ul>
+<p>   - Tap WhatsApp or email.</p>
+<p>   - Share dimensions, quantity, and artwork.</p>
+<p>   - Receive estimate/proof from the production desk.</p>
+<h2>6. Information architecture</h2>
+<ul>
+<li>Home</li>
+</ul>
+<p>  - Hero / value proposition</p>
+<p>  - Services</p>
+<p>  - Production specifications</p>
+<p>  - Portfolio</p>
+<p>  - Contact / inquiry</p>
+<ul>
+<li>Services</li>
+</ul>
+<p>  - Flex &amp; banners</p>
+<p>  - Visiting cards &amp; letterheads</p>
+<p>  - ID/PVC cards</p>
+<p>  - Envelopes, pamphlets &amp; posters</p>
+<p>  - Mementos, badges &amp; tags</p>
+<p>  - Bill books &amp; book printing</p>
+<p>  - Certificates &amp; diaries</p>
+<p>  - Vinyl &amp; one-way vision</p>
+<p>  - T-shirt &amp; fabric printing</p>
+<p>  - Mugs, pens &amp; corporate gifts</p>
+<ul>
+<li>Portfolio</li>
+</ul>
+<p>  - Banners &amp; flex</p>
+<p>  - Cards &amp; stationery</p>
+<p>  - Custom merchandise</p>
+<p>  - Vinyl &amp; fleet</p>
+<ul>
+<li>Contact</li>
+</ul>
+<p>  - WhatsApp</p>
+<p>  - Email</p>
+<p>  - Location</p>
+<p>  - Inquiry form</p>
+<h2>7. Functional requirements</h2>
+<h3>FR-01 Navigation</h3>
+<p>The site shall provide persistent navigation to Services, Our Works, Specs, and Contact.</p>
+<h3>FR-02 Quote CTA</h3>
+<p>A prominent quote action shall open an email composition addressed to the studio.</p>
+<h3>FR-03 WhatsApp CTA</h3>
+<p>A prominent WhatsApp action shall open a direct conversation with the studio number.</p>
+<h3>FR-04 Service catalogue</h3>
+<p>Each service shall expose:</p>
+<ul>
+<li>service name</li>
+<li>short description</li>
+<li>key production specifications</li>
+<li>material/finish tags</li>
+<li>inquiry CTA</li>
+</ul>
+<h3>FR-05 Portfolio</h3>
+<p>Portfolio cards shall communicate:</p>
+<ul>
+<li>project type</li>
+<li>application</li>
+<li>material/process</li>
+<li>dimensions or quantity where useful</li>
+<li>production/verification indicator</li>
+</ul>
+<h3>FR-06 Inquiry form</h3>
+<p>The contact form shall collect:</p>
+<ul>
+<li>full name / organization</li>
+<li>phone / WhatsApp</li>
+<li>required service</li>
+<li>dimensions</li>
+<li>quantity</li>
+<li>notes</li>
+<li>optional artwork/proof workflow in a future release</li>
+</ul>
+<h3>FR-07 Responsive UI</h3>
+<p>The experience shall adapt to mobile, tablet, and desktop layouts.</p>
+<h3>FR-08 Accessibility</h3>
+<p>Interactive controls shall have visible focus states, semantic labels, readable contrast, and keyboard access.</p>
+<h2>8. Content requirements</h2>
+<p>The website should communicate:</p>
+<ul>
+<li>fast/same-day flex priority where operationally true</li>
+<li>high-resolution print capability</li>
+<li>production location</li>
+<li>service breadth</li>
+<li>material/finish expertise</li>
+<li>direct human contact</li>
+<li>proof-oriented workflow</li>
+</ul>
+<p>Claims such as turnaround, DPI, or material availability must remain editable so operations can update them without redesigning the site.</p>
+<h2>9. Design requirements</h2>
+<ul>
+<li>Deep forest-green visual base.</li>
+<li>Vivid process-magenta primary CTA.</li>
+<li>Electric yellow secondary accent.</li>
+<li>Copper/orange tactile accent.</li>
+<li>Outfit for display/headlines.</li>
+<li>Hanken Grotesk for body text.</li>
+<li>Space Grotesk for technical labels.</li>
+<li>Rounded cards and capsule tags.</li>
+<li>Layered surfaces and subtle glow/elevation.</li>
+<li>CMYK/print-registration motifs used as supporting decoration, not essential content.</li>
+</ul>
+<h2>10. Success metrics</h2>
+<ul>
+<li>Quote CTA click-through rate.</li>
+<li>WhatsApp click-through rate.</li>
+<li>Inquiry-form completion rate.</li>
+<li>Service-card engagement.</li>
+<li>Portfolio engagement.</li>
+<li>Mobile conversion rate.</li>
+<li>Qualified inquiries per week.</li>
+<li>Inquiry-to-order conversion rate.</li>
+</ul>
+<h2>11. Acceptance criteria</h2>
+<p>The MVP is complete when:</p>
+<ul>
+<li>All primary services are represented.</li>
+<li>Contact routes work.</li>
+<li>Portfolio content renders correctly.</li>
+<li>Mobile and desktop layouts are usable.</li>
+<li>Key claims are editable.</li>
+<li>Forms have validation and success/error states.</li>
+<li>Accessibility checks pass for keyboard navigation and core contrast.</li>
+<li>Analytics can measure CTA and form conversions.</li>
+</ul>
+<h2>12. Future roadmap</h2>
+<h3>Phase 2</h3>
+<ul>
+<li>File upload for artwork.</li>
+<li>Automated quote request tracking.</li>
+<li>Proof approval flow.</li>
+<li>Customer order status.</li>
+</ul>
+<h3>Phase 3</h3>
+<ul>
+<li>Pricing rules engine.</li>
+<li>Customer dashboard.</li>
+<li>Online payments.</li>
+<li>Repeat-order templates.</li>
+<li>Production status: Design Ready → Proof Approved → In Press → Dispatched.</li>
+</ul></section></main></body></html>
