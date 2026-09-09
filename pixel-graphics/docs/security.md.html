@@ -1,0 +1,223 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SECURITY — Pixel Graphics</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&family=Outfit:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;background:#00170f;color:#cbe9db;font-family:'Hanken Grotesk',Arial,sans-serif}a{color:#ffb1c1;text-decoration:none}.top{height:4px;background:linear-gradient(90deg,#22d3ee,#e60067,#fddc00,#111)}header{position:sticky;top:0;z-index:10;background:rgba(2,20,14,.92);backdrop-filter:blur(18px);border-bottom:1px solid #203a30}.nav{max-width:1180px;margin:auto;padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between}.brand{font-family:Outfit;font-weight:800;font-size:22px;color:#fff9ed}.links{display:flex;gap:8px;flex-wrap:wrap}.links a{padding:8px 12px;border:1px solid #203a30;border-radius:10px;color:#cbe9db;font:600 12px 'Space Grotesk'}.links a.active{background:#e60067;color:white}.wrap{max-width:1180px;margin:auto;padding:44px 22px 80px}.hero{border:1px solid #203a30;border-radius:20px;padding:28px;background:linear-gradient(145deg,#09241b,#052017);box-shadow:0 18px 50px rgba(0,0,0,.35)}h1,h2,h3{font-family:Outfit;color:#fff9ed}h1{font-size:48px;margin:0 0 10px}h2{margin-top:34px;font-size:28px;border-bottom:1px solid #203a30;padding-bottom:8px}h3{font-size:20px}p,li{font-size:15px;line-height:1.7}code,pre{font-family:'Space Grotesk',monospace}pre{background:#00120b;border:1px solid #203a30;border-radius:12px;padding:16px;overflow:auto;color:#ffe24a}.meta{font:600 11px 'Space Grotesk';text-transform:uppercase;letter-spacing:.08em;color:#ffb691}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}.card{padding:16px;border:1px solid #203a30;border-radius:14px;background:#09241b}.card strong{display:block;color:#fff9ed;margin-bottom:5px}@media(max-width:800px){h1{font-size:36px}.grid{grid-template-columns:1fr 1fr}.links{display:none}}@media(max-width:520px){.grid{grid-template-columns:1fr}.wrap{padding:24px 14px 60px}}</style></head><body><div class="top"></div><header><div class="nav"><div class="brand">Pixel Graphics · Docs</div><nav class="links"><a href="../index.html">← Site</a><a class="" href="prd.md.html">PRD</a><a class="" href="trd.md.html">TRD</a><a class="active" href="security.md.html">SECURITY</a><a class="" href="agent.md.html">AGENT</a></nav></div></header><main class="wrap"><section class="hero"><div class="meta">Pixel Graphics Studio · Documentation</div><h1>Security Requirements</h1>
+<h2>Pixel Graphics — Design &amp; Print Solution</h2>
+<p><strong>Document status:</strong> Draft v1.0</p>
+<h2>1. Security objectives</h2>
+<p>Protect the studio, customers, inquiry data, uploaded artwork, and operational systems while keeping the website simple and fast.</p>
+<p>Primary goals:</p>
+<ul>
+<li>prevent unauthorized access</li>
+<li>minimize stored personal data</li>
+<li>protect inquiry endpoints</li>
+<li>protect uploaded artwork</li>
+<li>prevent abuse and spam</li>
+<li>prevent credential leakage</li>
+<li>maintain secure operational access</li>
+</ul>
+<h2>2. Threat model</h2>
+<h3>Public website</h3>
+<p>Threats include:</p>
+<ul>
+<li>spam and automated form abuse</li>
+<li>XSS</li>
+<li>CSRF</li>
+<li>injection attacks</li>
+<li>malicious file uploads</li>
+<li>scraping</li>
+<li>denial-of-service</li>
+<li>malicious third-party content</li>
+<li>dependency vulnerabilities</li>
+</ul>
+<h3>Administrative systems</h3>
+<p>Threats include:</p>
+<ul>
+<li>stolen credentials</li>
+<li>excessive permissions</li>
+<li>exposed API keys</li>
+<li>unauthorized portfolio/content changes</li>
+<li>compromised third-party accounts</li>
+</ul>
+<h2>3. Data classification</h2>
+<h3>Public</h3>
+<ul>
+<li>service descriptions</li>
+<li>portfolio images intended for publication</li>
+<li>public contact details</li>
+<li>business location</li>
+<li>published technical specifications</li>
+</ul>
+<h3>Internal</h3>
+<ul>
+<li>unpublished pricing</li>
+<li>operational notes</li>
+<li>production workflows</li>
+<li>internal analytics</li>
+</ul>
+<h3>Confidential</h3>
+<ul>
+<li>customer contact details</li>
+<li>inquiry notes</li>
+<li>uploaded artwork/proofs</li>
+<li>order information</li>
+</ul>
+<p>Do not collect sensitive personal information unless a legitimate business requirement exists.</p>
+<h2>4. Authentication and authorization</h2>
+<ul>
+<li>Use MFA for administrative accounts where supported.</li>
+<li>Apply least privilege.</li>
+<li>Separate public website access from admin access.</li>
+<li>Never use shared admin passwords.</li>
+<li>Rotate credentials after personnel changes.</li>
+<li>Use short-lived tokens for temporary upload access.</li>
+</ul>
+<h2>5. Secrets management</h2>
+<p>Secrets must:</p>
+<ul>
+<li>live only in server-side environment variables or a secrets manager</li>
+<li>never be committed to Git</li>
+<li>never be placed in HTML, CSS, client JavaScript, or screenshots</li>
+<li>never be logged</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>email provider API keys</li>
+<li>database credentials</li>
+<li>storage credentials</li>
+<li>analytics write keys where sensitive</li>
+<li>admin tokens</li>
+</ul>
+<h2>6. Web application controls</h2>
+<h3>Input validation</h3>
+<p>Validate every field on the server:</p>
+<ul>
+<li>string length</li>
+<li>allowed characters/formats</li>
+<li>enumerated service values</li>
+<li>numeric quantity limits</li>
+<li>dimensions format</li>
+<li>email format</li>
+</ul>
+<h3>Output encoding</h3>
+<p>Escape untrusted data before rendering it into HTML, emails, logs, or templates.</p>
+<h3>CSRF</h3>
+<p>Use CSRF protection for state-changing same-origin form requests when cookies/session authentication are involved.</p>
+<h3>XSS</h3>
+<ul>
+<li>Prefer framework auto-escaping.</li>
+<li>Avoid raw HTML injection.</li>
+<li>Sanitize rich text if it is ever accepted.</li>
+</ul>
+<h3>Injection</h3>
+<p>Use parameterized queries or ORM-safe APIs. Never concatenate user input into SQL, shell commands, or dynamic code.</p>
+<h2>7. Form abuse prevention</h2>
+<ul>
+<li>Rate limit by IP and/or session.</li>
+<li>Add honeypot or managed bot protection.</li>
+<li>Enforce server-side validation.</li>
+<li>Apply cooldowns for repeated submissions.</li>
+<li>Return generic failure messages where revealing internal details would help attackers.</li>
+</ul>
+<h2>8. File upload security</h2>
+<p>If artwork upload is implemented:</p>
+<ul>
+<li>allow only required file extensions and MIME types</li>
+<li>enforce file-size limits</li>
+<li>rename files using generated identifiers</li>
+<li>store outside executable web roots</li>
+<li>scan for malware where feasible</li>
+<li>never execute uploaded content</li>
+<li>strip unnecessary metadata where appropriate</li>
+<li>use signed, expiring download URLs</li>
+<li>isolate customer files from application code</li>
+</ul>
+<h2>9. HTTP security</h2>
+<p>Production should use:</p>
+<ul>
+<li>HTTPS only</li>
+<li>HSTS</li>
+<li>Content-Security-Policy</li>
+<li>X-Content-Type-Options: nosniff</li>
+<li>Referrer-Policy</li>
+<li>Permissions-Policy</li>
+<li>frame protection via CSP `frame-ancestors`</li>
+</ul>
+<p>Use a restrictive CSP and explicitly allow only required external font/icon/media domains.</p>
+<h2>10. Third-party resources</h2>
+<p>The reference UI loads fonts, icons, and an image from external hosts. Before production:</p>
+<ul>
+<li>inventory every third-party origin</li>
+<li>remove unnecessary dependencies</li>
+<li>prefer self-hosting critical assets</li>
+<li>use Subresource Integrity where compatible</li>
+<li>review privacy implications</li>
+<li>avoid third-party scripts that are not necessary for conversion or measurement</li>
+</ul>
+<h2>11. Privacy</h2>
+<ul>
+<li>Provide a clear privacy notice if personal data is collected.</li>
+<li>Collect only what is necessary to quote/contact the customer.</li>
+<li>Define retention periods.</li>
+<li>Delete stale inquiry data when no longer needed.</li>
+<li>Restrict internal access to customer information.</li>
+<li>Do not expose inquiry details in URLs or public client-side state.</li>
+</ul>
+<h2>12. Logging and monitoring</h2>
+<p>Log:</p>
+<ul>
+<li>authentication events</li>
+<li>rate-limit events</li>
+<li>server errors</li>
+<li>security events</li>
+<li>administrative changes</li>
+</ul>
+<p>Do not log:</p>
+<ul>
+<li>passwords</li>
+<li>authentication tokens</li>
+<li>full uploaded files</li>
+<li>unnecessary personal data</li>
+<li>private message contents</li>
+</ul>
+<p>Set alerts for unusual form volume, repeated failures, suspicious upload behavior, and admin authentication anomalies.</p>
+<h2>13. Dependency and supply-chain security</h2>
+<ul>
+<li>Pin or lock dependencies.</li>
+<li>Run dependency vulnerability scans.</li>
+<li>Remove unused packages.</li>
+<li>Review major version upgrades.</li>
+<li>Protect CI/CD secrets.</li>
+<li>Require code review for production changes.</li>
+</ul>
+<h2>14. Backup and recovery</h2>
+<p>If customer/order data is persisted:</p>
+<ul>
+<li>perform encrypted backups</li>
+<li>restrict backup access</li>
+<li>test restoration periodically</li>
+<li>define recovery objectives</li>
+<li>keep production and backup credentials separate</li>
+</ul>
+<h2>15. Incident response</h2>
+<p>Minimum process:</p>
+<ol>
+<li>1. Detect and triage.</li>
+<li>2. Contain the affected system.</li>
+<li>3. Preserve relevant logs.</li>
+<li>4. Rotate compromised credentials.</li>
+<li>5. Patch/remove the root cause.</li>
+<li>6. Restore trusted service.</li>
+<li>7. Assess affected data/users.</li>
+<li>8. Document lessons learned.</li>
+</ul>
+<h2>16. Security acceptance criteria</h2>
+<p>Before launch:</p>
+<ul>
+<li>HTTPS enforced.</li>
+<li>No secrets in repository/client bundle.</li>
+<li>Forms have rate limiting and validation.</li>
+<li>Security headers configured.</li>
+<li>Dependencies scanned.</li>
+<li>File upload disabled until securely implemented.</li>
+<li>Admin access protected with MFA where available.</li>
+<li>Error responses do not reveal stack traces or secrets.</li>
+<li>Privacy/data retention requirements documented.</li>
+</ul></section></main></body></html>
