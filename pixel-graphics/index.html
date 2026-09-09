@@ -3,6 +3,9 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pixel Graphics — Design &amp; Print Solution, Dhaleshwar</title>
+<meta name="description" content="Commercial design and print studio in Dhaleshwar, Agartala: flex banners, visiting cards, ID cards, mementos, custom apparel, and corporate branding with same-day flex production."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300170f'/%3E%3Ccircle cx='11' cy='13' r='4' fill='%2300ffff'/%3E%3Ccircle cx='21' cy='13' r='4' fill='%23e60067'/%3E%3Ccircle cx='16' cy='21' r='4' fill='%23fddc00'/%3E%3C/svg%3E"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -19,7 +22,20 @@
       }
     }
     ::-webkit-scrollbar { display: none; }
-    
+
+    /* Without the icon webfont (offline / blocked CDN) the ligature names would
+       render as literal words like "print" and "chat" — hide them instead, and
+       give icon-only controls a text label so they stay usable. */
+    .no-icon-font .material-symbols-outlined { display: none; }
+    .no-icon-font [data-icon-fallback]::after {
+      content: attr(data-icon-fallback);
+      font: 600 11px 'Space Grotesk', system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* The label needs more room than the square icon slot it replaces. */
+    .no-icon-font a[data-icon-fallback] { width: auto !important; padding: 0 0.6rem; }
+
     /* Print alignment guides & dot grid */
     .print-grid-bg {
       background-color: #02110c;
@@ -52,9 +68,9 @@
       pointer-events: none;
     }
   </style>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="vendor/tailwind.js"></script>
 <script id="tailwind-config">
-    tailwind.config = {
+    if (typeof tailwind !== 'undefined') tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
@@ -173,11 +189,11 @@ Admin
 <span class="material-symbols-outlined text-base">send</span>
 <span class="hidden md:inline">Request Quote</span>
 </a>
-<a class="w-9 h-9 rounded-xl bg-surface-container border border-emerald-700/40 hover:border-primary/50 hover:bg-surface-container-high text-on-surface-variant hover:text-primary flex items-center justify-center transition-all shadow-sm flex-shrink-0" href="admin.html" title="Studio Admin" aria-label="Studio Admin">
+<a class="w-9 h-9 rounded-xl bg-surface-container border border-emerald-700/40 hover:border-primary/50 hover:bg-surface-container-high text-on-surface-variant hover:text-primary flex items-center justify-center transition-all shadow-sm flex-shrink-0" href="admin.html" title="Studio Admin" aria-label="Studio Admin" data-icon-fallback="Admin">
 <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
 </a>
 <div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary-fixed via-primary to-cyan-400 shadow-[0_0_14px_rgba(255,177,193,0.3)]">
-<img id="logo-header" alt="Pixel Graphics Logo" class="w-9 h-9 rounded-full object-cover border border-surface-container-lowest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCqfi0eGvIJGLpjiBJDQzibNRJkqq-iJT8mf9kknrRATngurqpnQZ2pPpTtFOgPlwyIlSwSUwdfx9TrYZSDRPybFnd-pZHV7B4DCwkdv5lfRgbAF8dtJEYT3JxwuJxoG_fwckrn5AeMhk76OlS4BzKQOIC6e71GIcchIxoJehlcYtqC2pnD2BJ-jxmh3Cb8SbE1KICK7zNsJsKfIxOkxZQbA78TP2udygrbDgmIpecUQkruQvC7iIdRozJt_rZV81Svg"/>
+<img id="logo-header" alt="Pixel Graphics Logo" class="w-9 h-9 rounded-full object-cover border border-surface-container-lowest" src="assets/logo-header.jpg"/>
 </div>
 </div>
 </div>
@@ -282,7 +298,7 @@ Admin
 <span class="absolute bottom-3 right-3 text-emerald-500/40 text-xs font-mono select-none">04 +</span>
 <!-- Official Logo Image Container with Radiant Ring -->
 <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2 bg-gradient-to-tr from-primary-container via-secondary-fixed to-cyan-400 shadow-[0_0_50px_rgba(230,0,103,0.45)] flex items-center justify-center group">
-<img id="logo-hero" alt="Pixel Graphics Official Signage" class="w-full h-full rounded-full object-cover shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ5RoghqoeOccdpx07Y5LM-Trentk0WIWQwn_25GFmQb2oeca7bxhe_HWEBDjIgew641cSZASPxCCEdcjUgily_UTUwDiOG2G8z9UOBs6DcDC86Dk6D37WInu7lsF3PnT7BXIGzMZC5JeCm7yRkgzh9Jje6TC8jRAtECAqnNWHiy5ChhPMEa7LB53V_TbmetWaYInOw4RijZe7W5c3NojgBBXZsCdbJEQQ4QAWY-JfdqQhBKOOO6uVh-MkSUKTNqE-fg"/>
+<img id="logo-hero" alt="Pixel Graphics Official Signage" class="w-full h-full rounded-full object-cover shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]" src="assets/logo-hero.jpg"/>
 </div>
 <!-- Floating Pill 1: Offset & Digital -->
 <div class="absolute -top-4 -right-2 px-3 py-1.5 rounded-full bg-surface-container-high/95 backdrop-blur-md border border-secondary-fixed/40 text-secondary-fixed text-xs font-label-md font-semibold flex items-center gap-1.5 shadow-xl">
@@ -663,7 +679,7 @@ Admin
 <div class="flex items-center justify-between border-b border-emerald-900/50 pb-4">
 <div class="flex items-center gap-3">
 <div class="w-12 h-12 rounded-xl overflow-hidden p-0.5 bg-gradient-to-tr from-primary-container to-secondary-fixed flex-shrink-0 shadow-md">
-<img id="logo-contact" alt="Pixel Graphics Badge" class="w-full h-full object-cover rounded-[10px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4T5UZftkDf0qTbIycz6VvYhRBWwSHD9Gi5lKXBDBIGgmUTJaxSau-Md7L2EmodNqQDZ_PStoLy6NgSofzsUGz-SglSIYt6PTH6IZLMihOgr_AjJfgO2Hu48LuJOcNMn_sREXH6VEw0i6DaO5w9DNqKiO3EQ7tSQo320T99JKDs6vEE8BIW-hM9Ocf3f1rU_ppvCMHYnfBeYtJvKeUPymoQ3wNu_aoSVWSU5EAmtrBNyCalCxL1s61irhHkpZmxVi6rw"/>
+<img id="logo-contact" alt="Pixel Graphics Badge" class="w-full h-full object-cover rounded-[10px]" src="assets/logo-badge.jpg"/>
 </div>
 <div class="flex flex-col">
 <span class="font-headline-sm text-base font-bold text-secondary">WhatsApp Direct Desk</span>
@@ -836,7 +852,7 @@ Admin
 <!-- Brand recap -->
 <div class="flex items-center gap-3">
 <div class="p-0.5 rounded-full bg-gradient-to-tr from-primary-container to-secondary-fixed shadow-md">
-<img id="logo-footer" alt="Pixel Graphics Logo" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF5YV-VbnF5HUdvbveKUuwyb8_TmCMQun15KFEWVb3C5YJpLH_XQPjClst3NI_17GgBsC_34c78mVggYjD6CygXQEYAUbPwPqtJ7pI1zmjChd3hVv6y0cf7U3Lu7wZRu8uYelNHeEDDlc7zydA6vQRKbM0IXEYxkDgF1kK4mwKI7O8Vvy30WaQZoOiNyOKN8F1uZHw5GgGLQ65nbikavZi8c3pdS7RST1u5a_E_uPMKNDoWL5VsNe6QpAv-ok4IT8RbQ"/>
+<img id="logo-footer" alt="Pixel Graphics Logo" class="w-10 h-10 rounded-full object-cover" src="assets/logo-footer.jpg"/>
 </div>
 <div class="flex flex-col">
 <span class="font-headline-sm text-lg font-bold text-secondary">Pixel Graphics</span>
@@ -939,6 +955,26 @@ Admin
 
       applySiteSettings();
     });
+
+    // With the icon webfont active, "print" renders as a single square glyph
+    // (~1em wide); without it the literal word renders several times wider.
+    // Measuring is reliable where document.fonts.check() is not — check()
+    // reports true for a family that was never declared at all.
+    function hideIconsIfFontMissing() {
+      const probe = document.createElement('span');
+      probe.className = 'material-symbols-outlined';
+      probe.textContent = 'print';
+      probe.style.cssText = 'position:absolute;visibility:hidden;font-size:24px;';
+      document.body.appendChild(probe);
+      const width = probe.getBoundingClientRect().width;
+      probe.remove();
+      if (width > 40) document.documentElement.classList.add('no-icon-font');
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(hideIconsIfFontMissing);
+    } else {
+      window.addEventListener('load', hideIconsIfFontMissing);
+    }
 
     // --- Site identity: logo, WhatsApp number, email, address ----------------
     // Falls back silently to the values already baked into the markup above

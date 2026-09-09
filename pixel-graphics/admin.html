@@ -3,6 +3,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Studio Admin — Pixel Graphics</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300170f'/%3E%3Ccircle cx='11' cy='13' r='4' fill='%2300ffff'/%3E%3Ccircle cx='21' cy='13' r='4' fill='%23e60067'/%3E%3Ccircle cx='16' cy='21' r='4' fill='%23fddc00'/%3E%3C/svg%3E"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&amp;family=Outfit:wght@500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -26,10 +28,21 @@
   }
   .drop-zone.dragover { border-color: #ffb1c1; background: rgba(230,0,103,0.08); }
   [hidden] { display: none !important; }
+
+  /* Without the icon webfont (offline / blocked CDN) the ligature names would
+     render as literal words like "lock" and "upload" — hide them instead, and
+     give icon-only controls a text label so they stay usable. */
+  .no-icon-font .material-symbols-outlined { display: none; }
+  .no-icon-font [data-icon-fallback]::after {
+    content: attr(data-icon-fallback);
+    font: 600 11px 'Space Grotesk', system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 </style>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="vendor/tailwind.js"></script>
 <script id="tailwind-config">
-  tailwind.config = {
+  if (typeof tailwind !== 'undefined') tailwind.config = {
     darkMode: "class",
     theme: {
       extend: {
@@ -95,8 +108,31 @@
 
 <main class="max-w-[1100px] mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
 
+  <!-- SERVER UNREACHABLE VIEW -->
+  <section id="offline-view" hidden class="flex justify-center py-16">
+    <div class="glass-panel rounded-2xl p-8 w-full max-w-lg flex flex-col gap-4 shadow-2xl border border-secondary-fixed/30">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary-fixed text-3xl">power_off</span>
+        <h1 class="font-headline-sm text-xl text-secondary font-bold">The studio server isn’t running</h1>
+      </div>
+      <p class="text-on-surface-variant text-sm">
+        The admin panel needs its backend to sign you in, store uploads, and save your settings.
+        Opening this file directly from a folder won’t work — start the server, then use the address it prints.
+      </p>
+      <div class="rounded-xl bg-surface-container-lowest border border-emerald-800/40 p-4 font-mono text-xs text-secondary-fixed overflow-x-auto">
+        <div>cd pixel-graphics/server</div>
+        <div>npm install</div>
+        <div>npm start</div>
+      </div>
+      <p class="text-on-surface-variant text-sm">
+        Then open <span class="text-primary font-mono">http://localhost:3000/admin.html</span>
+      </p>
+      <button id="retry-btn" type="button" class="self-start px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Try Again</button>
+    </div>
+  </section>
+
   <!-- LOGIN VIEW -->
-  <section id="login-view" class="flex justify-center py-16">
+  <section id="login-view" hidden class="flex justify-center py-16">
     <form id="login-form" class="glass-panel rounded-2xl p-8 w-full max-w-sm flex flex-col gap-5 shadow-2xl">
       <div class="flex flex-col items-center gap-2 text-center">
         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-container to-surface-container-high border border-primary/30 flex items-center justify-center">
@@ -128,7 +164,7 @@
 
       <div class="flex flex-col sm:flex-row sm:items-center gap-4">
         <div class="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-secondary-fixed via-primary to-cyan-400 flex-shrink-0">
-          <img id="logo-preview" alt="Current logo" class="w-full h-full rounded-full object-cover bg-surface-container-lowest" src="" />
+          <img id="logo-preview" alt="Current logo" class="w-full h-full rounded-full object-cover bg-surface-container-lowest" />
         </div>
         <div class="flex flex-col gap-2">
           <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Website logo</label>
@@ -195,7 +231,7 @@
       <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
         <span class="material-symbols-outlined text-tertiary">upload</span> Upload Work
       </h2>
-      <p class="text-on-surface-variant text-sm">Add pictures, posters, banners, product photos, or design files (PDF, AI, PSD, EPS, SVG, ZIP). Pick from your computer's files or your phone's photo library / Files app — up to 30MB each.</p>
+      <p class="text-on-surface-variant text-sm">Add pictures, posters, banners, product photos, or design files (PDF, AI, PSD, EPS, CDR, SVG, ZIP). Pick from your computer's files or your phone's photo library / Files app — up to 30MB each.</p>
 
       <form id="upload-form" class="flex flex-col gap-4">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -222,8 +258,8 @@
         <label id="drop-zone" for="file-input" class="drop-zone cursor-pointer flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-emerald-700/40 py-10 text-center transition-all">
           <span class="material-symbols-outlined text-3xl text-primary">cloud_upload</span>
           <span class="text-secondary font-label-md text-sm">Drag &amp; drop files here, or tap to browse</span>
-          <span class="text-on-surface-variant text-xs">Images, PDF, AI, PSD, EPS, SVG, ZIP</span>
-          <input id="file-input" type="file" multiple hidden accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.pdf,.ai,.psd,.eps,.zip,image/*,application/pdf" />
+          <span class="text-on-surface-variant text-xs">Images, PDF, AI, PSD, EPS, CDR, SVG, ZIP — up to 30MB each</span>
+          <input id="file-input" type="file" multiple hidden accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.pdf,.ai,.psd,.eps,.cdr,.zip,image/*,application/pdf" />
         </label>
 
         <div id="upload-queue" class="flex flex-col gap-2"></div>
@@ -250,10 +286,40 @@
   const $ = (id) => document.getElementById(id);
   const loginView = $('login-view');
   const dashboardView = $('dashboard-view');
+  const offlineView = $('offline-view');
   const logoutBtn = $('logout-btn');
+
+  // With the icon webfont active, "print" renders as a single square glyph
+  // (~1em wide); without it the literal word renders several times wider.
+  // Measuring is reliable where document.fonts.check() is not — check()
+  // reports true for a family that was never declared at all.
+  function hideIconsIfFontMissing() {
+    const probe = document.createElement('span');
+    probe.className = 'material-symbols-outlined';
+    probe.textContent = 'print';
+    probe.style.cssText = 'position:absolute;visibility:hidden;font-size:24px;';
+    document.body.appendChild(probe);
+    const width = probe.getBoundingClientRect().width;
+    probe.remove();
+    if (width > 40) document.documentElement.classList.add('no-icon-font');
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(hideIconsIfFontMissing);
+  } else {
+    window.addEventListener('load', hideIconsIfFontMissing);
+  }
 
   const CATEGORY_LABELS = { banners: 'Banners & Flex', cards: 'Cards & Stationery', merch: 'Custom Merch', vinyl: 'Vinyl & Fleet', other: 'Other' };
   const FILE_ICONS = { 'application/pdf': 'picture_as_pdf', 'application/zip': 'folder_zip' };
+
+  // Thrown when the backend can't be reached at all (server stopped, or the
+  // file was opened straight from disk over file://).
+  class OfflineError extends Error {
+    constructor() {
+      super('Can’t reach the studio server.');
+      this.offline = true;
+    }
+  }
 
   async function getCsrfToken() {
     const res = await fetch('/api/csrf-token', { credentials: 'same-origin' });
@@ -263,12 +329,28 @@
 
   async function api(path, options = {}) {
     const opts = { credentials: 'same-origin', ...options };
-    if (opts.method && opts.method !== 'GET') {
-      opts.headers = { ...(opts.headers || {}), 'x-csrf-token': await getCsrfToken() };
+    let res;
+    try {
+      if (opts.method && opts.method !== 'GET') {
+        opts.headers = { ...(opts.headers || {}), 'x-csrf-token': await getCsrfToken() };
+      }
+      res = await fetch(path, opts);
+    } catch {
+      showOffline();
+      throw new OfflineError();
     }
-    const res = await fetch(path, opts);
+
     let data = null;
     try { data = await res.json(); } catch { /* no body */ }
+
+    // Only a lost session sends us back to the login screen. A 401 from
+    // change-password just means the typed current password was wrong.
+    if (data && data.code === 'SESSION_EXPIRED' && !path.endsWith('/session')) {
+      showLogin();
+      $('login-error').textContent = 'Your session expired. Please sign in again.';
+      $('login-error').hidden = false;
+    }
+
     if (!res.ok) throw new Error((data && data.message) || `Request failed (${res.status})`);
     return data;
   }
@@ -285,16 +367,34 @@
     loginView.hidden = false;
     dashboardView.hidden = true;
     logoutBtn.hidden = true;
+    offlineView.hidden = true;
+  }
+
+  function showOffline() {
+    loginView.hidden = true;
+    dashboardView.hidden = true;
+    logoutBtn.hidden = true;
+    offlineView.hidden = false;
   }
 
   async function checkSession() {
+    // Opened straight from disk: there is no server to talk to at all.
+    if (location.protocol === 'file:') {
+      showOffline();
+      return;
+    }
     try {
       await api('/api/admin/session');
       showDashboard();
-    } catch {
-      showLogin();
+    } catch (err) {
+      if (!err.offline) showLogin();
     }
   }
+
+  $('retry-btn').addEventListener('click', () => {
+    if (location.protocol === 'file:') return;
+    checkSession();
+  });
 
   // --- Login ---
   $('login-form').addEventListener('submit', async (e) => {
@@ -320,9 +420,21 @@
     showLogin();
   });
 
-  // --- Change password ---
+  // A status line must never outlive the values it described — otherwise a
+  // stale "Saved." sits next to a field the user is currently editing (and
+  // native form validation can block submit without clearing it).
+  function clearOnEdit(formId, messageId) {
+    $(formId).addEventListener('input', () => {
+      const el = $(messageId);
+      el.textContent = '';
+      el.className = 'text-sm';
+    });
+  }
+  clearOnEdit('settings-form', 'settings-message');
+  clearOnEdit('password-form', 'password-message');
+
   // --- Site identity: logo, WhatsApp, email, address ---
-  const FALLBACK_LOGO_SRC = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDCqfi0eGvIJGLpjiBJDQzibNRJkqq-iJT8mf9kknrRATngurqpnQZ2pPpTtFOgPlwyIlSwSUwdfx9TrYZSDRPybFnd-pZHV7B4DCwkdv5lfRgbAF8dtJEYT3JxwuJxoG_fwckrn5AeMhk76OlS4BzKQOIC6e71GIcchIxoJehlcYtqC2pnD2BJ-jxmh3Cb8SbE1KICK7zNsJsKfIxOkxZQbA78TP2udygrbDgmIpecUQkruQvC7iIdRozJt_rZV81Svg';
+  const FALLBACK_LOGO_SRC = 'assets/logo-header.jpg';
 
   async function loadSettings() {
     try {
@@ -511,7 +623,7 @@
             <p class="text-secondary text-sm font-semibold truncate">${escapeHtml(item.title)}</p>
             <p class="text-on-surface-variant text-xs">${CATEGORY_LABELS[item.category] || 'Other'}</p>
           </div>
-          <button data-delete-id="${item.id}" class="shrink-0 p-1.5 rounded-lg hover:bg-error-container/30 text-on-surface-variant hover:text-error transition-colors" title="Delete">
+          <button data-delete-id="${item.id}" data-icon-fallback="Delete" class="shrink-0 p-1.5 rounded-lg hover:bg-error-container/30 text-on-surface-variant hover:text-error transition-colors" title="Delete">
             <span class="material-symbols-outlined text-lg">delete</span>
           </button>
         </div>

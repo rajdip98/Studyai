@@ -15,7 +15,9 @@ const {
   requireAdmin,
   ensureCsrfCookie,
   requireCsrf,
-  checkRateLimit
+  isRateLimited,
+  recordFailedLogin,
+  clearLoginAttempts
 } = require('./lib/auth');
 
 const SITE_ROOT = path.join(__dirname, '..');
@@ -50,24 +52,53 @@ const ALLOWED_TYPES = {
   'application/illustrator': '.ai',
   'application/zip': '.zip'
 };
+
+// Browsers report most design formats as a generic type (or nothing at all),
+// so the extension is the only usable signal for those.
+const ALLOWED_EXTENSIONS = [
+  '.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg',
+  '.pdf', '.eps', '.psd', '.ai', '.cdr', '.zip'
+];
+const GENERIC_TYPES = ['application/octet-stream', 'application/x-zip-compressed', ''];
+
 const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
+
+function uploadExtension(file) {
+  const fromName = path.extname(file.originalname).toLowerCase();
+  if (ALLOWED_EXTENSIONS.includes(fromName)) return fromName;
+  return ALLOWED_TYPES[file.mimetype] || '';
+}
 
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOAD_DIR),
     filename: (req, file, cb) => {
-      const ext = ALLOWED_TYPES[file.mimetype] || path.extname(file.originalname).slice(0, 10);
-      cb(null, `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`);
+      cb(null, `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${uploadExtension(file)}`);
     }
   }),
   limits: { fileSize: MAX_FILE_SIZE, files: 1 },
   fileFilter: (req, file, cb) => {
-    if (!ALLOWED_TYPES[file.mimetype]) {
-      return cb(new Error(`Unsupported file type: ${file.mimetype}`));
+    const ext = path.extname(file.originalname).toLowerCase();
+    const typeOk = Boolean(ALLOWED_TYPES[file.mimetype]);
+    const extOk = ALLOWED_EXTENSIONS.includes(ext);
+    if (typeOk || (extOk && GENERIC_TYPES.includes(file.mimetype || ''))) {
+      return cb(null, true);
     }
-    cb(null, true);
+    cb(new Error(`Unsupported file type (${ext || file.mimetype || 'unknown'}). Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`));
   }
 });
+
+// Multer writes to disk as it streams, so a file that trips the size limit
+// leaves a partial upload behind; turn its terse codes into usable messages.
+function describeUploadError(err, maxMb) {
+  if (err.code === 'LIMIT_FILE_SIZE') return `File is too large. Maximum size is ${maxMb}MB.`;
+  if (err.code === 'LIMIT_FILE_COUNT') return 'Please upload one file at a time.';
+  return err.message;
+}
+
+function cleanUpFailedUpload(req) {
+  if (req.file && req.file.path) fs.unlink(req.file.path, () => {});
+}
 
 const LOGO_TYPES = {
   'image/jpeg': '.jpg',
@@ -129,8 +160,8 @@ app.get('/api/settings', async (req, res) => {
 
 app.post('/api/admin/login', requireCsrf, async (req, res) => {
   const ip = req.ip || 'unknown';
-  if (!checkRateLimit(ip)) {
-    return res.status(429).json({ success: false, message: 'Too many attempts. Try again later.' });
+  if (isRateLimited(ip)) {
+    return res.status(429).json({ success: false, message: 'Too many failed attempts. Try again in a few minutes.' });
   }
 
   const { password } = req.body || {};
@@ -141,9 +172,11 @@ app.post('/api/admin/login', requireCsrf, async (req, res) => {
   const admin = await adminStore.read();
   const ok = admin.passwordHash && bcrypt.compareSync(password, admin.passwordHash);
   if (!ok) {
+    recordFailedLogin(ip);
     return res.status(401).json({ success: false, message: 'Incorrect password.' });
   }
 
+  clearLoginAttempts(ip);
   res.cookie(SESSION_COOKIE, createSessionToken(), cookieOptions(req));
   res.json({ success: true });
 });
@@ -186,7 +219,8 @@ app.post('/api/admin/change-password', requireAdmin, requireCsrf, async (req, re
 app.post('/api/admin/portfolio', requireAdmin, requireCsrf, (req, res) => {
   upload.single('file')(req, res, async (err) => {
     if (err) {
-      return res.status(400).json({ success: false, message: err.message });
+      cleanUpFailedUpload(req);
+      return res.status(400).json({ success: false, message: describeUploadError(err, 30) });
     }
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No file uploaded.' });
@@ -273,7 +307,8 @@ app.post('/api/admin/settings', requireAdmin, requireCsrf, async (req, res) => {
 app.post('/api/admin/logo', requireAdmin, requireCsrf, (req, res) => {
   uploadLogo.single('logo')(req, res, async (err) => {
     if (err) {
-      return res.status(400).json({ success: false, message: err.message });
+      cleanUpFailedUpload(req);
+      return res.status(400).json({ success: false, message: describeUploadError(err, 5) });
     }
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No image uploaded.' });
@@ -325,6 +360,9 @@ app.use('/server', (req, res) => res.status(404).end());
 app.use(express.static(SITE_ROOT, { extensions: ['html'] }));
 
 app.use((req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, message: 'Not found.' });
+  }
   res.status(404).sendFile(path.join(SITE_ROOT, 'index.html'));
 });
 

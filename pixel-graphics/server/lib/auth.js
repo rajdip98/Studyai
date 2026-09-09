@@ -69,7 +69,9 @@ function cookieOptions(req) {
 function requireAdmin(req, res, next) {
   const token = req.cookies && req.cookies[SESSION_COOKIE];
   if (!verifySessionToken(token)) {
-    return res.status(401).json({ success: false, message: 'Not signed in.' });
+    // The code lets the client tell "your session ended" apart from a 401 that
+    // means "the password you just typed was wrong".
+    return res.status(401).json({ success: false, code: 'SESSION_EXPIRED', message: 'Not signed in.' });
   }
   next();
 }
@@ -105,15 +107,29 @@ const attempts = new Map(); // ip -> { count, resetAt }
 const MAX_ATTEMPTS = 8;
 const WINDOW_MS = 10 * 60 * 1000;
 
-function checkRateLimit(ip) {
+// Only failures count toward the limit, and a success clears the record —
+// otherwise the studio's own admin gets locked out by ordinary repeated use.
+function isRateLimited(ip) {
+  const entry = attempts.get(ip);
+  if (!entry || Date.now() > entry.resetAt) {
+    attempts.delete(ip);
+    return false;
+  }
+  return entry.count >= MAX_ATTEMPTS;
+}
+
+function recordFailedLogin(ip) {
   const now = Date.now();
   const entry = attempts.get(ip);
   if (!entry || now > entry.resetAt) {
     attempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
+    return;
   }
   entry.count += 1;
-  return entry.count <= MAX_ATTEMPTS;
+}
+
+function clearLoginAttempts(ip) {
+  attempts.delete(ip);
 }
 
 module.exports = {
@@ -125,5 +141,7 @@ module.exports = {
   requireAdmin,
   ensureCsrfCookie,
   requireCsrf,
-  checkRateLimit
+  isRateLimited,
+  recordFailedLogin,
+  clearLoginAttempts
 };
