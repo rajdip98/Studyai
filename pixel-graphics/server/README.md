@@ -5,6 +5,7 @@ A small, dependency-light Express server that adds:
 - A password-gated **admin panel** (`/admin.html`) for the studio owner.
 - **File uploads** (images, posters, banners, product photos, PDF/AI/PSD/EPS/SVG/ZIP design files) that appear on the live "Our Works" section of the public site.
 - **In-panel password change.**
+- **Site identity editing** — logo, WhatsApp number, contact email, and studio address, all updated live across the whole public site (header, hero, contact section, footer) without touching the HTML.
 
 No third-party backend service is used — everything is plain Node.js, storing data as local JSON files and uploaded files on disk under this folder.
 
@@ -27,6 +28,7 @@ Then open:
 
 - `server/data/admin.json` — the admin password hash. Never commit a real production password hash you care about keeping private to a public repo; treat this file like a secret once you've changed the password.
 - `server/data/portfolio.json` — metadata (title, category, description, file info) for every uploaded work.
+- `server/data/settings.json` — the site's logo path, WhatsApp number, email, and address.
 - `server/public/uploads/` — the actual uploaded files, served at `/uploads/<file>`.
 - `server/data/.session-secret` — auto-generated on first run; signs admin login sessions. Do not commit it (it's git-ignored). Deleting it invalidates all active admin sessions.
 

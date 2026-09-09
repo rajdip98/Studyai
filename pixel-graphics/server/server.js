@@ -27,6 +27,13 @@ const adminStore = new JsonFileStore(path.join(__dirname, 'data', 'admin.json'),
   updatedAt: null
 });
 const portfolioStore = new JsonFileStore(path.join(__dirname, 'data', 'portfolio.json'), []);
+const settingsStore = new JsonFileStore(path.join(__dirname, 'data', 'settings.json'), {
+  logoUrl: null,
+  whatsappNumber: '917005569637',
+  email: 'graphicspixel18@gmail.com',
+  address: 'Dhaleshwar, Agartala, Tripura 799007',
+  updatedAt: null
+});
 
 const CATEGORIES = ['banners', 'cards', 'merch', 'vinyl', 'other'];
 
@@ -62,6 +69,35 @@ const upload = multer({
   }
 });
 
+const LOGO_TYPES = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/svg+xml': '.svg'
+};
+const MAX_LOGO_SIZE = 5 * 1024 * 1024; // 5MB
+
+const uploadLogo = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+    filename: (req, file, cb) => {
+      const ext = LOGO_TYPES[file.mimetype] || path.extname(file.originalname).slice(0, 10);
+      cb(null, `logo-${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`);
+    }
+  }),
+  limits: { fileSize: MAX_LOGO_SIZE, files: 1 },
+  fileFilter: (req, file, cb) => {
+    if (!LOGO_TYPES[file.mimetype]) {
+      return cb(new Error(`Unsupported image type: ${file.mimetype}`));
+    }
+    cb(null, true);
+  }
+});
+
+function isValidEmail(value) {
+  return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', true);
@@ -80,6 +116,11 @@ app.get('/api/csrf-token', (req, res) => {
 app.get('/api/portfolio', async (req, res) => {
   const items = await portfolioStore.read();
   res.json({ items: [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt)) });
+});
+
+app.get('/api/settings', async (req, res) => {
+  const settings = await settingsStore.read();
+  res.json(settings);
 });
 
 // -----------------------------------------------------------------------
@@ -187,6 +228,86 @@ app.delete('/api/admin/portfolio/:id', requireAdmin, requireCsrf, async (req, re
 
   fs.unlink(path.join(UPLOAD_DIR, removed.storedFileName), () => {});
   res.json({ success: true });
+});
+
+// -----------------------------------------------------------------------
+// Admin site settings: logo, WhatsApp number, email, address
+// -----------------------------------------------------------------------
+
+app.post('/api/admin/settings', requireAdmin, requireCsrf, async (req, res) => {
+  const { whatsappNumber, email, address } = req.body || {};
+  const updates = {};
+
+  if (whatsappNumber !== undefined) {
+    const digits = String(whatsappNumber).replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 15) {
+      return res.status(400).json({ success: false, message: 'WhatsApp number must be 10–15 digits (include the country code, e.g. 91 for India).' });
+    }
+    updates.whatsappNumber = digits;
+  }
+
+  if (email !== undefined) {
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Enter a valid email address.' });
+    }
+    updates.email = email.trim();
+  }
+
+  if (address !== undefined) {
+    const trimmed = String(address).trim().slice(0, 300);
+    if (!trimmed) {
+      return res.status(400).json({ success: false, message: 'Address cannot be empty.' });
+    }
+    updates.address = trimmed;
+  }
+
+  const settings = await settingsStore.update((current) => ({
+    ...current,
+    ...updates,
+    updatedAt: new Date().toISOString()
+  }));
+
+  res.json({ success: true, settings });
+});
+
+app.post('/api/admin/logo', requireAdmin, requireCsrf, (req, res) => {
+  uploadLogo.single('logo')(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image uploaded.' });
+    }
+
+    const previous = await settingsStore.read();
+    const settings = await settingsStore.update((current) => ({
+      ...current,
+      logoUrl: `/uploads/${req.file.filename}`,
+      updatedAt: new Date().toISOString()
+    }));
+
+    if (previous.logoUrl) {
+      const previousPath = path.join(UPLOAD_DIR, path.basename(previous.logoUrl));
+      fs.unlink(previousPath, () => {});
+    }
+
+    res.json({ success: true, settings });
+  });
+});
+
+app.delete('/api/admin/logo', requireAdmin, requireCsrf, async (req, res) => {
+  const previous = await settingsStore.read();
+  const settings = await settingsStore.update((current) => ({
+    ...current,
+    logoUrl: null,
+    updatedAt: new Date().toISOString()
+  }));
+
+  if (previous.logoUrl) {
+    fs.unlink(path.join(UPLOAD_DIR, path.basename(previous.logoUrl)), () => {});
+  }
+
+  res.json({ success: true, settings });
 });
 
 // -----------------------------------------------------------------------

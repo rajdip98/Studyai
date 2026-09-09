@@ -120,6 +120,51 @@
   <!-- DASHBOARD VIEW -->
   <section id="dashboard-view" hidden class="flex flex-col gap-8">
 
+    <!-- Site identity: logo, WhatsApp, email, address -->
+    <div class="glass-panel rounded-2xl p-6 flex flex-col gap-5">
+      <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-tertiary">storefront</span> Site Identity
+      </h2>
+
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-secondary-fixed via-primary to-cyan-400 flex-shrink-0">
+          <img id="logo-preview" alt="Current logo" class="w-full h-full rounded-full object-cover bg-surface-container-lowest" src="" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Website logo</label>
+          <p class="text-on-surface-variant text-xs max-w-md">Used in the header, hero badge, contact card, and footer. PNG, JPG, WEBP, or SVG — square images look best.</p>
+          <div class="flex items-center gap-3">
+            <label class="cursor-pointer px-4 py-2 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">
+              Upload New Logo
+              <input id="logo-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
+            </label>
+            <button id="reset-logo-btn" type="button" class="px-4 py-2 rounded-xl bg-surface-container-lowest hover:bg-error-container/30 text-on-surface-variant hover:text-error border border-emerald-800/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Reset to Default</button>
+          </div>
+          <p id="logo-message" class="text-sm"></p>
+        </div>
+      </div>
+
+      <form id="settings-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end pt-2 border-t border-emerald-900/50">
+        <div class="flex flex-col gap-1.5 pt-4">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">WhatsApp number</label>
+          <input id="settings-whatsapp" type="text" inputmode="numeric" placeholder="e.g. 917005569637" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+          <span class="text-on-surface-variant text-xs">Digits only, with country code (e.g. 91 for India).</span>
+        </div>
+        <div class="flex flex-col gap-1.5 pt-4">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Contact email</label>
+          <input id="settings-email" type="email" placeholder="studio@example.com" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="flex flex-col gap-1.5 pt-4">
+          <label class="font-label-sm text-xs uppercase tracking-wider text-on-surface-variant">Studio address</label>
+          <input id="settings-address" type="text" placeholder="Street, City, State PIN" class="rounded-xl bg-surface-container-lowest border border-emerald-700/40 focus:border-primary outline-none px-3 py-2.5 text-secondary" />
+        </div>
+        <div class="sm:col-span-3 flex items-center gap-4">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-primary-container text-secondary hover:text-white border border-emerald-700/30 font-label-md text-xs uppercase font-semibold tracking-wider transition-all">Save Site Info</button>
+          <p id="settings-message" class="text-sm"></p>
+        </div>
+      </form>
+    </div>
+
     <!-- Change password -->
     <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
       <h2 class="font-headline-sm text-lg text-secondary font-bold flex items-center gap-2">
@@ -233,6 +278,7 @@
     dashboardView.hidden = false;
     logoutBtn.hidden = false;
     loadPortfolio();
+    loadSettings();
   }
 
   function showLogin() {
@@ -275,6 +321,80 @@
   });
 
   // --- Change password ---
+  // --- Site identity: logo, WhatsApp, email, address ---
+  const FALLBACK_LOGO_SRC = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDCqfi0eGvIJGLpjiBJDQzibNRJkqq-iJT8mf9kknrRATngurqpnQZ2pPpTtFOgPlwyIlSwSUwdfx9TrYZSDRPybFnd-pZHV7B4DCwkdv5lfRgbAF8dtJEYT3JxwuJxoG_fwckrn5AeMhk76OlS4BzKQOIC6e71GIcchIxoJehlcYtqC2pnD2BJ-jxmh3Cb8SbE1KICK7zNsJsKfIxOkxZQbA78TP2udygrbDgmIpecUQkruQvC7iIdRozJt_rZV81Svg';
+
+  async function loadSettings() {
+    try {
+      const settings = await api('/api/settings');
+      $('logo-preview').src = settings.logoUrl || FALLBACK_LOGO_SRC;
+      $('settings-whatsapp').value = settings.whatsappNumber || '';
+      $('settings-email').value = settings.email || '';
+      $('settings-address').value = settings.address || '';
+    } catch {
+      $('logo-preview').src = FALLBACK_LOGO_SRC;
+    }
+  }
+
+  $('logo-input').addEventListener('change', async () => {
+    const file = $('logo-input').files[0];
+    if (!file) return;
+    const messageEl = $('logo-message');
+    messageEl.textContent = 'Uploading…';
+    messageEl.className = 'text-sm text-tertiary';
+
+    const formData = new FormData();
+    formData.append('logo', file);
+
+    try {
+      const data = await api('/api/admin/logo', { method: 'POST', body: formData });
+      $('logo-preview').src = data.settings.logoUrl;
+      messageEl.textContent = 'Logo updated.';
+      messageEl.className = 'text-sm text-emerald-400';
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.className = 'text-sm text-error';
+    }
+    $('logo-input').value = '';
+  });
+
+  $('reset-logo-btn').addEventListener('click', async () => {
+    const messageEl = $('logo-message');
+    try {
+      const data = await api('/api/admin/logo', { method: 'DELETE' });
+      $('logo-preview').src = data.settings.logoUrl || FALLBACK_LOGO_SRC;
+      messageEl.textContent = 'Reverted to the default logo.';
+      messageEl.className = 'text-sm text-emerald-400';
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.className = 'text-sm text-error';
+    }
+  });
+
+  $('settings-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const messageEl = $('settings-message');
+    messageEl.textContent = '';
+    messageEl.className = 'text-sm';
+
+    try {
+      await api('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          whatsappNumber: $('settings-whatsapp').value,
+          email: $('settings-email').value,
+          address: $('settings-address').value
+        })
+      });
+      messageEl.textContent = 'Site info saved.';
+      messageEl.classList.add('text-emerald-400');
+    } catch (err) {
+      messageEl.textContent = err.message;
+      messageEl.classList.add('text-error');
+    }
+  });
+
   $('password-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const messageEl = $('password-message');
